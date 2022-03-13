@@ -1,0 +1,326 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AreaListEntity {
+  ID: Float!
+  area_name: String!
+  child_category_lesson: [LessonCategoryEntity!]!
+  child_category_questionproduct: [QuestionProductCategoryEntity!]!
+}
+
+type MediaListEntity {
+  ID: Float!
+  media_name: String!
+  media_type: String!
+  media_path: String!
+  user_ID: Float!
+  parent_ID: Float!
+  media_created_time: DateTime!
+  media_category: String!
+  media_status: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type GuestQAndAEntity {
+  ID: Float
+  item_content: String
+  user_email: String
+  user_ID: Float
+  question_date: DateTime
+  parent_ID: Float
+  item_type: String
+  item_status: String
+  QA_status: String
+  like_arr: [Int!]
+  is_reported: Boolean!
+  report_notes: String!
+  report_sender: Float!
+  report_counter: Float!
+  reported_date: DateTime!
+  report_controllers: [Int!]!
+  author_isBlocked: Boolean!
+  QA_imgs: [MediaListEntity!]
+  QA_img_path: String!
+}
+
+type QuestionMarketAnswerEntity {
+  ID: Float!
+  answer_content: String!
+  parent_ID: Float!
+  user_ID: Float!
+  answer_imgs: [MediaListEntity!]
+}
+
+type QuestionMarket_UserAnswerEntity {
+  ID: Float!
+  answer_content: String!
+  parent_ID: Float!
+  user_ID: Float!
+  is_reviewed: Boolean!
+  answer_date: DateTime!
+  answer_is_outdated: Boolean!
+  review_ID: Float!
+  waiting_reviewers: [Int!]!
+  answer_imgs: [MediaListEntity!]
+  is_reported: Boolean!
+  report_notes: String!
+  report_sender: Float!
+  report_counter: Float!
+  reported_date: DateTime!
+  report_controllers: [Int!]!
+  answer_status: String!
+  author_isBlocked: Boolean!
+}
+
+type DefaultConfigEntity {
+  ID: Float!
+  postimg_path: String!
+  default_post_avatar: String!
+  userimg_path: String!
+  shopitem_img_path: String!
+  QA_img_path: String!
+}
+
+type UserInventoryEntity {
+  ID: Float!
+  item_quantity: Float!
+  item_name: String
+  item_code: String!
+  user_ID: Float!
+  item_avatar: String
+  item_description: String
+}
+
+type UserEntity {
+  ID: Float!
+  user_name: String!
+  user_password: String!
+  user_secretcode: String!
+  user_email: String!
+  user_role: String!
+  user_level: Int!
+  levelup_points: Int!
+  user_experience: Float!
+  user_abicoin: Float!
+  user_stat: String!
+  user_avatar: MediaListEntity!
+  gender: String!
+  is_blocked: Boolean!
+  punish_point: Float!
+  user_private_answers: [QuestionMarket_UserAnswerEntity!]
+  defaultconfig: DefaultConfigEntity!
+  user_inventory: [UserInventoryEntity!]
+}
+
+type PostEntity {
+  ID: Float!
+  post_title: String!
+  post_content: String!
+  post_author: Float!
+  post_date: DateTime!
+  post_type: String!
+  post_category: [Int!]!
+  question_experience: Float!
+  post_status: String!
+  post_avatar: MediaListEntity
+  question_answer: QuestionMarketAnswerEntity
+  question_imgs: [MediaListEntity!]
+  question_avatar: MediaListEntity
+  lesson_avatar: MediaListEntity
+  author_info: UserEntity
+  questionmarket_user_answer: [QuestionMarket_UserAnswerEntity!]
+  is_reported: Boolean!
+  report_notes: String!
+  report_sender: Float!
+  report_counter: Float!
+  reported_date: DateTime!
+  report_controllers: [Int!]!
+  author_isBlocked: Boolean!
+}
+
+type PostCommentEntity {
+  ID: Float
+  comment_content: String
+  user_id: String
+  comment_date: DateTime
+  parent_ID: String
+  post_type: String
+  liked_users: [Int!]
+  comment_status: String
+}
+
+type ReportLoggerEntity {
+  ID: Float!
+  report_notes: String!
+  report_date: DateTime!
+  report_sender: Float!
+  report_controllers: [Int!]!
+  parent_ID: Float!
+  report_type: String!
+  finished: Boolean!
+}
+
+type ServerChatEntity {
+  ID: Float!
+  message_content: String!
+  message_date: DateTime!
+  server_name: String!
+  user_ID: Float!
+  user_email: String!
+  user_name: String!
+}
+
+type ShopItemEntity {
+  ID: Float!
+  item_code: String!
+  item_name: String!
+  item_description: String!
+  item_price: Float!
+  avatar_path: String!
+  item_avatar: String!
+}
+
+type UserNotificationEntity {
+  ID: Float!
+  type: String!
+  data: JSONObject!
+  secret: String!
+  notification_date: DateTime!
+  user_IDs: [Int!]!
+  deletion_allowed: [Int!]!
+}
+
+"""
+The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSONObject @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+type UserPrivateMessageEntity {
+  ID: Float!
+  message_content: String!
+  message_date: DateTime!
+  sender_email: String!
+  sender_ID: Float!
+  user_ID: Float!
+}
+
+type UserAnswerReviewEntity {
+  ID: Float!
+  correctness: Boolean!
+  review_content: String!
+  answerer_ID: Float!
+  user_answer_ID: Float!
+  question_ID: Float!
+  question_info: JSONObject!
+  review_date: DateTime!
+  review_author: Float!
+  review_confirmation: Boolean!
+  original_answer_ID: Int!
+  original_answer_info: JSONObject!
+  review_updated: Boolean!
+  review_fixed: Boolean!
+  is_reported: Boolean!
+  report_notes: String!
+  report_sender: Float!
+  report_counter: Float!
+  reported_date: DateTime!
+  report_controllers: [Int!]!
+  review_confirmed: Boolean!
+  review_isLiked: Boolean!
+  review_status: String!
+  author_isBlocked: Boolean!
+}
+
+type LessonCategoryEntity {
+  ID: Float!
+  category_name: String!
+  area_ID: Float!
+  child_lessons: [PostEntity!]!
+}
+
+type AdminInfoEntity {
+  ID: Float!
+  user_name: String!
+  user_password: String!
+  user_secretcode: String!
+  user_email: String!
+  user_role: String!
+  user_level: Int!
+  levelup_points: Int!
+  user_experience: Float!
+  user_abicoin: Float!
+  user_stat: String!
+  user_avatar: MediaListEntity!
+  gender: String!
+  is_blocked: Boolean!
+  punish_point: Float!
+  user_private_answers: [QuestionMarket_UserAnswerEntity!]
+  defaultconfig: DefaultConfigEntity!
+  user_inventory: [UserInventoryEntity!]
+  lessons: [PostEntity!]!
+  arealist: [AreaListEntity!]!
+  lessoncatlist: [LessonCategoryEntity!]!
+  report_loggers: [ReportLoggerEntity!]!
+}
+
+type MainLandingPageEntity {
+  ID: Float!
+  all_comments: [PostCommentEntity!]!
+  all_QandA: [GuestQAndAEntity!]!
+  defaultconfig: DefaultConfigEntity!
+  all_lessons: [PostEntity!]!
+  all_questionproducts: [PostEntity!]!
+}
+
+type QuestionProductCategoryEntity {
+  ID: Float!
+  category_name: String!
+  area_ID: Float!
+  child_lessons: [PostEntity!]!
+  user_ID: Float!
+}
+
+type LessonGuestPageEntity {
+  ID: Float!
+  lesson_tree: [AreaListEntity!]!
+  all_lessons: [PostEntity!]!
+  defaultconfig: DefaultConfigEntity!
+}
+
+type QuestionMarketInfoEntity {
+  ID: Float!
+  product_tree: [AreaListEntity!]!
+  defaultconfig: DefaultConfigEntity!
+  answer_reviews: [UserAnswerReviewEntity!]
+  shop_items: [ShopItemEntity!]
+  userinfo: UserEntity!
+}
+
+type Query {
+  admininfo: AdminInfoEntity!
+  mainlandingpageInfo: MainLandingPageEntity!
+  guest_QAs: [GuestQAndAEntity!]!
+  server_chat_items(server_name: String!): [ServerChatEntity!]!
+  shop_items: [ShopItemEntity!]!
+  user_inventory: [UserInventoryEntity!]!
+  user_info: UserEntity!
+  user_notifications: [UserNotificationEntity!]!
+  user_private_messages: [UserPrivateMessageEntity!]!
+  lesson_page: LessonGuestPageEntity!
+  questionmarketinfo: QuestionMarketInfoEntity!
+}
+
+type Mutation {
+  delete_single_notification(notification_ID: Float!): Float!
+  delete_single_user_answer(answer_ID: Float!): JSON!
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
