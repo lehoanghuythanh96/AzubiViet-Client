@@ -1,0 +1,278 @@
+<mat-dialog-content>
+  <div class="container p-0" *ngIf="question_item">
+    <div class="row" *ngIf="data.noti_type == 'question_reported'">
+      <div class="col">
+        <p>
+          <b
+            ><u>
+              <i class="fa-thin fa-circle-question me-2"></i> Question content:
+            </u></b
+          >
+        </p>
+        <p>
+          {{ question_item.item_content }}
+        </p>
+        <p>
+          <mat-error>
+            <i class="fa-thin fa-flag-swallowtail me-2"></i>This question is
+            reported with notes:
+          </mat-error>
+        </p>
+        <p>
+          {{ question_item.report_notes }}
+        </p>
+        <div class="row pb-3">
+          <div class="col">
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+        <p class="h5 text-center">
+          <u>Who is wrong here?</u>
+        </p>
+        <div class="row mb-3 justify-content-around">
+          <div class="col-auto">
+            <button
+              mat-raised-button
+              color="warn"
+              (click)="confirmReport(true)"
+            >
+              <i class="fa-thin fa-marker"></i> Question author
+            </button>
+          </div>
+          <div class="col-auto">
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="confirmReport(false)"
+            >
+              <i class="fa-thin fa-flag"></i> The reporter
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" *ngIf="data.noti_type == 'questionAuthor_isPunished'">
+      <div class="col">
+        <p>
+          <b
+            ><u>
+              <i class="fa-thin fa-circle-question me-2"></i> Question Content:
+            </u></b
+          >
+        </p>
+        <p>
+          {{ question_item.item_content }}
+        </p>
+        <p>
+          <mat-error>
+            <i class="fa-thin fa-flag-swallowtail me-2"></i>Your question is
+            reported with notes:
+          </mat-error>
+        </p>
+        <p>
+          {{ question_item.report_notes }}
+        </p>
+        <div class="row pb-3">
+          <div class="col">
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+        <p>
+          <mat-hint>
+            If you think your question has no problem, please contact admin for
+            more information
+          </mat-hint>
+        </p>
+      </div>
+    </div>
+    <div class="row" *ngIf="data.noti_type == 'questionReporter_isPunished'">
+      <div class="col">
+        <p>
+          <b
+            ><u>
+              <i class="fa-thin fa-circle-question me-2"></i> Question Content:
+            </u></b
+          >
+        </p>
+        <p>
+          {{ question_item.item_content }}
+        </p>
+        <p>
+          <u
+            ><i class="fa-thin fa-flag-swallowtail me-2"></i>You reported this
+            question with notes:</u
+          >
+        </p>
+        <p>
+          {{ question_item.report_notes }}
+        </p>
+        <p>
+            <mat-error>
+                <i class="fa-thin fa-ban me-2"></i>Your report is denied
+            </mat-error>
+        </p>
+        <div class="row pb-3">
+          <div class="col">
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+        <p>
+          <mat-hint>
+            If you think your report is right, please contact admin for
+            more information
+          </mat-hint>
+        </p>
+      </div>
+    </div>
+    <div class="row" *ngIf="data.noti_type == 'answer_reported'">
+      <div class="col">
+        <p>
+          <b
+            ><u>
+              <i class="fa-thin fa-circle-question me-2"></i> Question content:
+            </u></b
+          >
+        </p>
+        <p>
+          {{ question_item.item_content }}
+        </p>
+        <p>
+          <b><u><i>
+            <i class="fa-thin fa-circle-exclamation me-2"></i>Reported Answer
+          </i></u></b>
+        </p>
+        <p>
+          {{ answer_item.item_content }}
+        </p>
+        <p>
+          <mat-error>
+            <i class="fa-thin fa-flag-swallowtail me-2"></i>This answer is
+            reported with notes:
+          </mat-error>
+        </p>
+        <p>
+          {{ answer_item.report_notes }}
+        </p>
+        <div class="row pb-3">
+          <div class="col">
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+        <p class="h5 text-center">
+          <u>Who is wrong here?</u>
+        </p>
+        <div class="row mb-3 justify-content-around">
+          <div class="col-auto">
+            <button
+              mat-raised-button
+              color="warn"
+              (click)="confirmReport(true)"
+            >
+              <i class="fa-thin fa-marker"></i> Answer author
+            </button>
+          </div>
+          <div class="col-auto">
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="confirmReport(false)"
+            >
+              <i class="fa-thin fa-flag"></i> The reporter
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" *ngIf="data.noti_type == 'answerAuthor_isPunished'">
+      <div class="col">
+        <p>
+          <b
+            ><u>
+              <i class="fa-thin fa-circle-question me-2"></i> Question Content:
+            </u></b
+          >
+        </p>
+        <p>
+          {{ question_item.item_content }}
+        </p>
+        <p>
+          <b><u><i>
+            <i class="fa-thin fa-pen-to-square me-2"></i>Your answer
+          </i></u></b>
+        </p>
+        <p>
+          {{answer_item.item_content}}
+        </p>
+        <p>
+          <mat-error>
+            <i class="fa-thin fa-flag-swallowtail me-2"></i>Your answer is
+            reported with notes:
+          </mat-error>
+        </p>
+        <p>
+          {{ answer_item.report_notes }}
+        </p>
+        <div class="row pb-3">
+          <div class="col">
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+        <p>
+          <mat-hint>
+            If you think your answer has no problem, please contact admin for
+            more information
+          </mat-hint>
+        </p>
+      </div>
+    </div>
+    <div class="row" *ngIf="data.noti_type == 'answerReporter_isPunished'">
+      <div class="col">
+        <p>
+          <b
+            ><u>
+              <i class="fa-thin fa-circle-question me-2"></i> Question Content:
+            </u></b
+          >
+        </p>
+        <p>
+          {{ question_item.item_content }}
+        </p>
+        <p>
+          <b
+            ><u>
+              <i class="fa-thin fa-pen-to-square me-2"></i> Answer Content:
+            </u></b
+          >
+        </p>
+        <p>
+          {{ answer_item.item_content }}
+        </p>
+        <p>
+          <u
+            ><i class="fa-thin fa-flag-swallowtail me-2"></i>You reported this
+            answer with notes:</u
+          >
+        </p>
+        <p>
+          {{ answer_item.report_notes }}
+        </p>
+        <p>
+            <mat-error>
+                <i class="fa-thin fa-ban me-2"></i>Your report is denied
+            </mat-error>
+        </p>
+        <div class="row pb-3">
+          <div class="col">
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+        <p>
+          <mat-hint>
+            If you think your report is right, please contact admin for
+            more information
+          </mat-hint>
+        </p>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>

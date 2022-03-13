@@ -1,0 +1,50 @@
+<div class="container-fluid p-0 pb-5">
+  <app-particle-bg></app-particle-bg>
+  <div class="row">
+    <div class="col-12">
+      <app-neon-panel></app-neon-panel>
+    </div>
+  </div>
+  <div class="row py-5 text-center" *ngIf="userinfo">
+    <div class="col">
+      <p class="h3">Welcome, {{ userinfo.user_name }}!</p>
+    </div>
+  </div>
+  <div class="row pb-3">
+    <div class="col text-center">
+      <button mat-raised-button color="primary" routerLink="/questionmarket/managequestions">
+        <i class="fa-thin fa-file-plus me-2"></i>Create new Question
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 col-md-6 pb-5 pb-md-0">
+      <div class="row justify-content-center">
+        <div class="col-auto">
+          <mat-form-field appearance="outline" *ngIf="arealist">
+            <mat-label>Choose an area</mat-label>
+            <mat-select [formControl]="areaselection">
+              <mat-option *ngFor="let item of arealist" [value]="item.ID">{{
+                item.area_name
+              }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-auto">
+          <button
+            mat-raised-button
+            color="accent"
+            (click)="emitareachoosed(areaselection.value)"
+          >
+            Go to market
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 text-center d-flex justify-content-center">
+      <app-user-abi-card></app-user-abi-card>
+    </div>
+  </div>
+</div>

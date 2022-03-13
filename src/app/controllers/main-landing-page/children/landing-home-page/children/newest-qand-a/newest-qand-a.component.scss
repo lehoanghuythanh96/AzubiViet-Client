@@ -1,0 +1,24 @@
+.btn-sm {
+  padding: 0 0.5rem;
+  font-size: 12px;
+}
+
+[mat-cell] {
+  padding: 0.5rem 0;
+}
+
+table {
+  background: transparent;
+  box-shadow: 0 8px 32px 0 #caccf15e;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+mat-paginator {
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px 0 #caccf15e;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }

@@ -1,0 +1,107 @@
+<div class="container" *ngIf="question && answer && user_answer">
+  <div class="row mb-5 justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-6">
+      <div
+        style="
+                      width: 100%;
+                      height: 400px;
+                      max-height: 60vh;
+                      border-radius: 10px;
+                      background: url('{{
+          cdnfolder + question.question_avatar.media_name
+        }}') no-repeat center center / cover;
+                  "
+      ></div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-6">
+      <mat-card>
+        <p class="h3 text-center" [innerHTML]="question.post_title"></p>
+        <p>
+          <u><b>Question:</b></u>
+        </p>
+        <div class="mb-3" [innerHTML]="question.post_content"></div>
+        <div class="row mb-3" *ngIf="question_imgnames.length > 0">
+          <div class="col">
+            <app-image-viewer
+              [image_names]="question_imgnames"
+            ></app-image-viewer>
+          </div>
+        </div>
+        <p>
+          <u><b>Original answer:</b></u>
+        </p>
+        <div class="mb-3" [innerHTML]="answer.answer_content"></div>
+        <div class="row mb-3" *ngIf="answer_imgnames.length > 0">
+          <div class="col">
+            <app-image-viewer
+              [image_names]="answer_imgnames"
+            ></app-image-viewer>
+          </div>
+        </div>
+        <p>
+          <b><u>Your answer:</u></b>
+        </p>
+        <div class="mb-3" [innerHTML]="user_answer.answer_content"></div>
+        <div class="row mb-3" *ngIf="user_answer_imgnames.length > 0">
+          <div class="col">
+            <app-image-viewer
+              [image_names]="user_answer_imgnames"
+            ></app-image-viewer>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <p class="h5">
+              <b>*** <u>Review:</u></b>
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <p>1. Your answer is:</p>
+            <div class="row mb-3">
+              <button mat-raised-button color="primary" *ngIf="foundReview.correctness">
+                <i class="fa-light fa-circle-check"></i> Right
+              </button>
+              <button mat-raised-button color="warn" *ngIf="!foundReview.correctness">
+                <i class="fa-light fa-circle-xmark"></i> Wrong
+              </button>
+            </div>
+            <div class="row mb-3">
+              <div class="col">2. Comment of the reviewer:</div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <p [innerHTML]="foundReview.review_content"></p>
+              </div>
+            </div>
+            <div class="row" *ngIf="!foundReview.review_confirmed">
+              <div class="col text-center">
+                <p class="h4">
+                  Your confirmation:
+                </p>
+                <p>
+                  Are you satisfied with this review?
+                </p>
+                <p>
+                  <button mat-mini-fab class="me-2" (click)="userConfirmReview(true)">
+                    <i class="fa-light fa-thumbs-up h5 m-0"></i>
+                  </button>
+                  <button mat-mini-fab color="warn" class="me-2" (click)="userConfirmReview(true)">
+                    <i class="fa-light fa-thumbs-down h5 m-0"></i>
+                  </button>
+                  <button mat-button (click)="openReportDialog()">
+                    <i class="fa-light fa-flag-swallowtail"></i> Report
+                  </button>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>

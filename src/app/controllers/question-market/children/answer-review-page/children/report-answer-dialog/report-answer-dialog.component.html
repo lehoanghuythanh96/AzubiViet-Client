@@ -1,0 +1,17 @@
+<mat-dialog-content>
+  <p class="h5">
+    <u><i class="fa-thin fa-flag-swallowtail me-2"></i> Report Form</u>
+  </p>
+  <mat-form-field>
+    <mat-label> Why do you report this answer, write somethings... </mat-label>
+    <textarea name="Report notes" rows="5" matInput [formControl]="reportNotes"></textarea>
+  </mat-form-field>
+  <mat-hint>
+    By confirming this form, you are agreed that your report is true. If not,
+    you may get 1 punish point from the controllers.
+  </mat-hint>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-raised-button color="primary" (click)="confirmReport()">Confirm</button>
+</mat-dialog-actions>

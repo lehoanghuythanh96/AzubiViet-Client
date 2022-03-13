@@ -1,0 +1,11 @@
+<div
+  routerLink="/questionmarket/checkreview"
+  [queryParams]="{ 
+    review_ID: item.data.review_ID,
+    notification_ID: item.ID
+  }"
+  class="py-3"
+>
+  <i class="fa-light fa-ballot-check"></i> One of your answer is reviewed,
+  please check and give your feedback.
+</div>

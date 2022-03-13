@@ -1,0 +1,138 @@
+<mat-dialog-content>
+  <div class="container-fluid p-0">
+    <div class="row" *ngIf="question">
+      <div class="col">
+        <div class="row">
+          <div class="col">
+            <p *ngIf="!userinfo || userinfo.ID != question.user_ID">
+              <b><u>Question:</u></b>
+            </p>
+            <p class="text-success" *ngIf="userinfo && userinfo.ID == question.user_ID">
+              <b><u>Your Question:</u></b>
+            </p>
+          </div>
+          <div class="col-auto">
+            <button
+              mat-button
+              matTooltip="Report"
+              (click)="openReportQuestionDialog()"
+              *ngIf="!userinfo || userinfo.ID != question.user_ID"
+            >
+              <i class="fa-thin fa-bug h5 m-0"></i>
+            </button>
+          </div>
+        </div>
+        <p>
+          {{ question.item_content }}
+        </p>
+        <app-image-viewer [image_names]="image_names" [cdnfolder]="cdnfolder"></app-image-viewer>
+      </div>
+    </div>
+    <div class="row py-3" *ngIf="!userinfo">
+      <div class="col text-center">
+        <button mat-button color="primary" (click)="loginBox()">
+          <i class="fa-regular fa-right-to-bracket"></i> Login to answer
+        </button>
+      </div>
+    </div>
+    <div class="row" *ngIf="user_answer">
+      <div class="col">
+        <div class="row">
+          <div class="col">
+            <p>
+              <b><u>Your answer:</u></b>
+            </p>
+          </div>
+          <div class="col-auto">
+            <button
+              mat-button
+              color="warn"
+              (click)="deleteAnswer(user_answer.ID)"
+            >
+              <i class="fa-thin fa-trash-xmark h5 m-0"></i>
+            </button>
+          </div>
+        </div>
+        <p>
+          {{ user_answer.item_content }}
+        </p>
+      </div>
+    </div>
+    <div class="row" *ngIf="!user_answer && question && question.QA_status != 'Closed' && userinfo && userinfo.ID != question.user_ID">
+      <div class="col">
+        <mat-form-field>
+          <mat-label> Your answer </mat-label>
+          <textarea
+            name="QA Answer"
+            rows="5"
+            matInput
+            [formControl]="item_content"
+          ></textarea>
+        </mat-form-field>
+        <p class="text-end">
+          <button
+            mat-button
+            color="primary"
+            (click)="submitAnswer()"
+          >
+            Send <i class="fa-thin fa-paper-plane ms-2"></i>
+          </button>
+        </p>
+      </div>
+    </div>
+    <div class="row" *ngIf="all_answer.length > 0">
+      <div class="col">
+        <p>
+          <b><u>All answers:</u></b>
+        </p>
+        <mat-card class="border mb-3" *ngFor="let item of all_answer">
+          <mat-card-content>
+            <p>
+              <mat-hint
+                ><i>{{ item.user_email }}:</i></mat-hint
+              >
+            </p>
+            <div class="row pb-3">
+              <div class="col">
+                <mat-divider></mat-divider>
+              </div>
+            </div>
+            <p>
+              {{ item.item_content }}
+            </p>
+            <div class="row justify-content-between">
+              <div class="col-auto">
+                <button mat-button (click)="openReportAnswerDialog(item.ID)">
+                  <i class="fa-thin fa-bug h5 m-0"></i>
+                </button>
+              </div>
+              <div class="col-auto">
+                <button
+                  mat-button
+                  *ngIf="!isLiked(item.like_arr)"
+                  (click)="likeAnswer(item.ID)"
+                >
+                  <i class="fa-thin fa-heart h5 m-0 me-2"></i>
+                  {{ item.like_arr.length }}
+                </button>
+                <button
+                  mat-button
+                  *ngIf="isLiked(item.like_arr)"
+                  (click)="likeAnswer(item.ID)"
+                >
+                  <i class="fa-solid fa-heart h5 m-0 me-2"></i>
+                  {{ item.like_arr.length }}
+                </button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close cdkFocusInitial>
+        Close
+    </button>
+</mat-dialog-actions>

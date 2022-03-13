@@ -1,0 +1,23 @@
+<div class="container-fluid py-2 sticky-top bg-white">
+  <div class="row justify-content-between">
+    <div class="col-auto">
+      <button mat-button (click)="toggleLeftSidebar()">
+        <i class="fa-thin fa-bars"></i>
+      </button>
+      <button mat-button routerLink="/questionmarket">
+        <i class="fa-thin fa-delete-left"></i>
+      </button>
+    </div>
+    <div class="col-auto">
+      <button mat-button (click)="toggleRightSidebar()">
+        <i class="fa-thin fa-message-captions"></i>
+      </button>
+      <button mat-button [matMenuTriggerFor]="usernotifications">
+        <i class="fa-thin fa-bells"></i>
+      </button>
+      <mat-menu #usernotifications="matMenu" [hasBackdrop]="true">
+        <app-user-notification-card></app-user-notification-card>
+      </mat-menu>
+    </div>
+  </div>
+</div>

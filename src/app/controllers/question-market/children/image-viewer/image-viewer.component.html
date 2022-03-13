@@ -1,0 +1,16 @@
+<div
+  class="container position-relative p-0"
+  *ngIf="images && images.length > 0"
+>
+  <div class="row">
+    <div class="col">
+      <div ngxViewer>
+          <div class="row">
+              <div class="col-4 col-md-3 col-lg-2 pb-2" *ngFor="let img of images">
+                <img [src]="img" class="img-fluid"/>
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>

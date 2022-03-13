@@ -1,0 +1,32 @@
+<div class="row">
+  <div class="col">
+    <p class="h5 text-center">Change password</p>
+    <mat-form-field appearance="outline">
+      <mat-label> New password </mat-label>
+      <input type="password" matInput name="Reset password" [formControl]="password"/>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label> Confirm new password </mat-label>
+      <input type="password" matInput name="Confirm new password" [formControl]="confirm_password"/>
+    </mat-form-field>
+    <mat-error *ngIf="error_msg">
+        {{error_msg}}
+    </mat-error>
+    <div class="row pb-2">
+      <div class="col">
+        <mat-hint>
+          <b><u>Hint:</u></b> Never use personal information. Include a
+          combination of letters, numbers, and characters. Prioritize password
+          length. Never repeat passwords. Avoid using real words.
+        </mat-hint>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-end">
+        <button mat-raised-button color="primary" (click)="confirm()">
+          <i class="fa-thin fa-lock me-2"></i>Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

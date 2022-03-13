@@ -1,0 +1,113 @@
+<div class="row">
+  <div class="col">
+    <p class="h3" *ngIf="addoredit">Add new question</p>
+    <p class="h3" *ngIf="!addoredit">Edit question #{{ questiontoedit }}</p>
+  </div>
+</div>
+<mat-card class="mb-5">
+  <mat-card-content>
+    <form [formGroup]="productForm" (ngSubmit)="confirmForm()">
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <mat-form-field appearance="outline" *ngIf="arealist">
+            <mat-label>Area</mat-label>
+            <mat-select formControlName="area_ID">
+              <mat-option value="0"></mat-option>
+              <mat-option *ngFor="let area of arealist" [value]="area.ID">
+                {{ area.area_name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6">
+          <mat-form-field
+            appearance="outline"
+            style="width: 70%"
+            *ngIf="arealist && catlist"
+          >
+            <mat-label>Category</mat-label>
+            <mat-select formControlName="category_ID" multiple>
+              <mat-option *ngFor="let cat of catlist" [value]="cat.ID">
+                {{ cat.category_name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <button
+            type="button"
+            class="ms-2"
+            mat-mini-fab
+            color="primary"
+            style="max-width: 20%"
+            *ngIf="arealist && catlist"
+            (click)="openAddCategoryDialog()"
+          >
+            <i class="fal fa-plus"></i>
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="outline" style="width: 100%">
+            <mat-label> Question Name (Max. 155 characters) </mat-label>
+            <input matInput formControlName="question_title" type="text" />
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <app-new-product-avatar-form></app-new-product-avatar-form>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <p>
+            <b>Question Content:</b>
+          </p>
+          <div class="container p-0 pb-4">
+            <quill-editor
+              [modules]="modules"
+              theme="snow"
+              formControlName="question_content"
+            >
+            </quill-editor>
+          </div>
+        </div>
+      </div>
+      <app-new-product-image-form></app-new-product-image-form>
+      <div class="row">
+        <div class="col">
+          <p>
+            <b>
+              Answer for this question:
+            </b>
+          </p>
+          <div class="container p-0 pb-4">
+            <quill-editor
+              [modules]="modules"
+              theme="snow"
+              formControlName="question_answer"
+            >
+            </quill-editor>
+          </div>
+        </div>
+      </div>
+      <app-new-product-answer-img-form></app-new-product-answer-img-form>
+      <div class="row mt-3">
+        <div class="col text-end">
+          <button
+            class="me-2"
+            mat-raised-button
+            color="warn"
+            type="button"
+            (click)="resetform()"
+          >
+            <i class="far fa-redo me-2"></i><span>Reset</span>
+          </button>
+          <button mat-raised-button color="accent" type="submit">
+            <i class="far fa-check me-2"></i><span>Done</span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

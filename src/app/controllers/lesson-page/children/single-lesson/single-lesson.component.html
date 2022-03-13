@@ -1,0 +1,55 @@
+<div class="container p-0 pt-5 wrapper" *ngIf="lessontoview">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <p class="text-center h2">
+          {{ lessontoview.post_title }}
+        </p>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-12 col-md-6">
+        <i class="fal fa-books me-2"></i><span>Topic:</span>
+        <div class="row" *ngFor="let cat of cattoview">
+          <div class="col">
+            <span class="mat-small">{{ cat.category_name }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 text-end">
+        <a href="https://www.facebook.com/groups/azubiviet" target="_blank">
+          <img
+            src="assets/img/postlayout/fbicon.svg"
+            width="30px"
+            height="30px"
+            alt=""
+          />
+        </a>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row justify-content-center py-2">
+      <div class="col-auto">
+        <div
+          style="
+        height: 300px;
+        width: 500px;
+        max-width: 90vw;
+        background: url('{{
+            cdnpath + lessontoview.lesson_avatar.media_name
+          }}') no-repeat center center / cover;
+      "
+        ></div>
+      </div>
+    </div>
+    <div class="row py-4">
+      <div class="col">
+        <div
+          id="maincontent"
+          [innerHTML]="lessontoview_content | safeHtml"
+        ></div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-particle-bg></app-particle-bg>

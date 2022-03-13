@@ -1,0 +1,91 @@
+<div class="row">
+  <div class="col">
+    <swiper
+      [navigation]="true"
+      [slidesPerView]="slideratio"
+      [mousewheel]="true"
+      [spaceBetween]="50"
+      [pagination]="{ clickable: true, dynamicBullets: true }"
+    >
+      <ng-template swiperSlide *ngFor="let item of productimgs">
+        <div
+          class="productimage"
+          [id]="'a' + item.split('.')[0]"
+          style="
+            width: 40px;
+            height: 40px;
+            background: url('{{
+            cdnfolder + item
+          }}') no-repeat center center / cover;
+            "
+          (click)="productimgselected('a' + item.split('.')[0], item)"
+        ></div>
+      </ng-template>
+    </swiper>
+  </div>
+</div>
+<div class="row justify-content-between">
+  <div class="col-auto"></div>
+  <div class="col-auto text-end">
+    <mat-chip-list>
+      <mat-chip
+        color="warn"
+        selected
+        *ngIf="currentchoosedimg"
+        (click)="deletetempproductimg()"
+        ><i class="fal fa-trash me-2"></i><span>Delete selected</span></mat-chip
+      >
+    </mat-chip-list>
+  </div>
+</div>
+<div class="row my-3">
+  <div class="col">
+    <div class="mb-3">
+      <label for="formFile" class="form-label"><strong>Images for this question (Optional)</strong></label>
+      <input
+        class="form-control"
+        type="file"
+        (input)="uploadfile($event.target)"
+      />
+    </div>
+    <mat-hint *ngIf="uploadimgbyfilesuccess">
+      <span class="text-success">Image uploaded successfully</span>
+    </mat-hint>
+    <mat-progress-bar
+      *ngIf="uploadimgbyfiletoggle"
+      mode="determinate"
+      [value]="upimgformpercent"
+    ></mat-progress-bar>
+    <mat-error *ngIf="uploadimgbyfileerror">
+      {{ uploadimgbyfileinfo }}
+    </mat-error>
+    <div class="mt-3">
+      <mat-label> Or use an image url </mat-label>
+      <div class="input-group my-3">
+        <input
+          #urltreeavatar
+          type="text"
+          class="form-control"
+          aria-describedby="button-addon2"
+        />
+        <button
+          class="btn btn-outline-secondary"
+          type="button"
+          id="button-addon2"
+          (click)="uploadfilebyurl(urltreeavatar.value)"
+        >
+          Submit
+        </button>
+      </div>
+      <div *ngIf="uploadimgbyurltoggle">
+        <mat-progress-bar mode="query"></mat-progress-bar>
+      </div>
+      <mat-hint *ngIf="uploadimgbyurlsuccess">
+        <span class="text-success">Image uploaded successfully</span>
+      </mat-hint>
+      <mat-error *ngIf="uploadimgbyurlerror">
+        {{ uploadimgbyurlinfo }}
+      </mat-error>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+<div class="row mt-4">
+  <div class="col-12">
+    <span class="mat-small">Category</span>
+  </div>
+  <div class="col-12">
+    <mat-selection-list #list (selectionChange)="choosecat(list.selectedOptions.selected)">
+      <mat-list-option *ngFor="let cat of catlist$" [value]="cat.ID">
+        {{ cat.category_name }}
+      </mat-list-option>
+    </mat-selection-list>
+  </div>
+</div>
+<div class="row my-3 justify-content-end">
+  <div class="col-auto">
+    <mat-chip-list>
+      <mat-chip (click)="openAddDialog()" color="primary" selected><i class="fal fa-plus me-2"></i><span>Add category</span></mat-chip>
+    </mat-chip-list>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<div
+  routerLink="/questionmarket/reviewanswer"
+  [queryParams]="{
+    question_ID: item.data.question_ID,
+    answer_ID: item.data.user_answer_ID,
+    token: item.secret
+  }"
+  class="py-3"
+>
+  You have the answer #{{ item.data.user_answer_ID }} to check.
+</div>

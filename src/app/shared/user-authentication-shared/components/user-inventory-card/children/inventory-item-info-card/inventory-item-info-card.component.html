@@ -1,0 +1,20 @@
+<mat-card>
+  <mat-card-content>
+    <p class="h5">
+      {{ data.item.item_name }}
+    </p>
+    <div class="row pb-3">
+      <div class="col">
+        <mat-divider></mat-divider>
+      </div>
+    </div>
+    <div class="row pb-3">
+      <div class="col text-center">
+        <img [src]="data.cdnpath + data.item.item_avatar" width="30" />
+      </div>
+    </div>
+    <p>
+      <b><u>Description: </u></b>{{data.item.item_description}}
+    </p>
+  </mat-card-content>
+</mat-card>

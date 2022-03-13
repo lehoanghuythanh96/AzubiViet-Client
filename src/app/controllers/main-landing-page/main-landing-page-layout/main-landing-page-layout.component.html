@@ -1,0 +1,27 @@
+<mat-drawer-container autosize [hasBackdrop]="isMobile ? true : false">
+  <mat-drawer
+    [opened]="false"
+    [mode]="'over'"
+  >
+    <app-left-sidebar></app-left-sidebar>
+  </mat-drawer>
+  <mat-drawer
+    class="right-sidebar"
+    [opened]="openRightSideBar"
+    [mode]="isMobile ? 'over' : 'side'"
+    position="end"
+    (openedChange)="rightSidebarMovement($event)"
+  >
+    <app-right-sidebar></app-right-sidebar>
+  </mat-drawer>
+  <mat-drawer-content>
+    <app-header></app-header>
+    <div class="container-fluid p-0 py-5">
+      <div class="row">
+        <div class="col">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </div>
+  </mat-drawer-content>
+</mat-drawer-container>

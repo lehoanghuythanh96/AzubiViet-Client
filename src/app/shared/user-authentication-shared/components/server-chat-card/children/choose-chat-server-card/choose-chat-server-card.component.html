@@ -1,0 +1,20 @@
+<div class="container">
+  <div class="row">
+    <div class="col text-center">
+      <mat-card>
+        <mat-card-content>
+          <p class="h5">Choose a server to start chat</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-auto">
+      <main>
+        <button *ngFor="let item of nameList" (click)="chooseServer(item.name)">
+          {{ item.name }} ({{ item.size }})
+        </button>
+      </main>
+    </div>
+  </div>
+</div>

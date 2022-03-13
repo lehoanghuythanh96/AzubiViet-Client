@@ -1,0 +1,130 @@
+<mat-card *ngIf="showorhide">
+  <mat-card-content *ngIf="loginorsignup" [formGroup]="loginForm">
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="outline">
+          <mat-label> Email </mat-label>
+          <input
+            formControlName="user_email"
+            matInput
+            type="text"
+            name="email"
+            placeholder="Nhập email..."
+          />
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="outline">
+          <mat-label> Mật khẩu </mat-label>
+          <input
+            matInput
+            formControlName="user_password"
+            type="password"
+            name="password"
+            placeholder="Nhập mật khẩu..."
+          />
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row my-2 justify-content-end">
+      <div class="col-auto">
+        <re-captcha
+          (resolved)="resolvedCaptcha($event)"
+          [siteKey]="captchaSitekey"
+        ></re-captcha>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-end">
+        <a (click)="loginorsignup = false" style="cursor: pointer"
+          ><u>Đăng ký thành viên</u></a
+        >
+      </div>
+    </div>
+  </mat-card-content>
+  <mat-card-content *ngIf="!loginorsignup" [formGroup]="signupForm">
+    <div class="row">
+      <div class="col">
+        <p class="h4 text-center"><i class="fal fa-user me-2"></i>Đăng ký</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="outline">
+          <mat-label> Email </mat-label>
+          <input
+            formControlName="user_email"
+            matInput
+            type="text"
+            name="signup_email"
+            placeholder="Nhập email..."
+            autocomplete="off"
+          />
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="outline">
+          <mat-label> Mật khẩu </mat-label>
+          <input
+            matInput
+            formControlName="user_password"
+            type="password"
+            name="signup_password"
+            placeholder="Nhập mật khẩu..."
+            autocomplete="off"
+          />
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="outline">
+          <mat-label> Mật khẩu </mat-label>
+          <input
+            matInput
+            formControlName="confirm_password"
+            type="password"
+            name="signup_confirmpassword"
+            placeholder="Nhập lại mật khẩu..."
+            autocomplete="off"
+          />
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-end">
+        <a (click)="loginorsignup = true" style="cursor: pointer"
+          ><u>Đăng nhập</u></a
+        >
+      </div>
+    </div>
+  </mat-card-content>
+  <mat-error *ngIf="form_error">
+    {{ error_details }}
+  </mat-error>
+  <mat-card-actions align="end">
+    <button class="me-2" (click)="signInWithGoogle()" mat-raised-button>
+      <i class="fab fa-google me-2"></i>Login with GG
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      *ngIf="loginorsignup"
+      (click)="onLogin()"
+    >
+      <i class="fal fa-sign-in me-2"></i>Đăng nhập
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      *ngIf="!loginorsignup"
+      (click)="onSignup()"
+    >
+      <i class="fal fa-check me-2"></i>Xác nhận
+    </button>
+  </mat-card-actions>
+</mat-card>

@@ -1,0 +1,69 @@
+<div class="container" *ngIf="question">
+  <div class="row mb-5 justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-6">
+      <div
+        style="
+                        width: 100%;
+                        height: 400px;
+                        max-height: 60vh;
+                        border-radius: 10px;
+                        background: url('{{
+          cdnfolder + question.question_avatar.media_name
+        }}') no-repeat center center / cover;
+                    "
+      ></div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-6">
+      <mat-card>
+        <p class="h3 text-center" [innerHTML]="question.post_title"></p>
+        <p class="h5">
+          <u><b>Question:</b></u>
+        </p>
+        <div class="mb-3" [innerHTML]="question.post_content"></div>
+        <div class="row mb-3" *ngIf="question_imgnames.length > 0">
+          <div class="col">
+            <app-image-viewer
+              [image_names]="question_imgnames"
+            ></app-image-viewer>
+          </div>
+        </div>
+        <div class="row pb-3">
+          <div class="col">
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+        <div class="row" *ngIf="!isReport">
+          <div class="col">
+            <p class="text-danger">
+              <i class="fa-thin fa-bug me-2"></i>Your question is reported with
+              notes:
+            </p>
+          </div>
+          <p>
+            {{ question.report_notes }}
+          </p>
+        </div>
+        <div class="row" *ngIf="isReport">
+          <div class="col">
+            <p class="text-danger">
+              <i class="fa-thin fa-bug me-2"></i>You reported this question with
+              notes:
+            </p>
+            <p>
+              {{ question.report_notes }}
+            </p>
+            <p>
+              <mat-hint>
+                If you still think that your report is right, please contact
+                admin for further information
+              </mat-hint>
+            </p>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>

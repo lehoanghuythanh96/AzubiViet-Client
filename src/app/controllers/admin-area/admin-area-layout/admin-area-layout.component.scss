@@ -1,0 +1,18 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+mat-drawer-container {
+    height: inherit;
+    mat-drawer {
+        padding: 0.5rem;
+        box-shadow: none;
+        background: transparent;
+    }
+}
+
+mat-drawer-content {
+    overflow-x: hidden;
+}

@@ -1,0 +1,20 @@
+<mat-dialog-content>
+  <p class="h5">
+    <u><i class="fa-thin fa-envelope me-2"></i> Message Form</u>
+  </p>
+  <mat-form-field>
+    <mat-label> Write something to the question author... </mat-label>
+    <textarea
+      name="Question message"
+      rows="5"
+      matInput
+      [formControl]="messageContent"
+    ></textarea>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" (click)="confirmMessage()">
+    Confirm<i class="fa-thin fa-paper-plane ms-2"></i>
+  </button>
+</mat-dialog-actions>

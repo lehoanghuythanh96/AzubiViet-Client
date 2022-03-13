@@ -1,0 +1,56 @@
+<div class="container">
+  <div class="row pb-5">
+    <div class="col-12 col-sm-6 col-xl-3 pb-3" *ngFor="let item of overalls">
+      <mat-card>
+        <mat-card-content>
+          <div class="row">
+            <div class="col-4">
+              <img
+                [src]="item.img"
+                [alt]="item.title"
+                width="80px"
+                height="auto"
+              />
+            </div>
+            <div class="col-8">
+              <p class="text-muted text-end">
+                <b>
+                  {{ item.title }}
+                </b>
+              </p>
+              <p class="text-end h5" [innerHTML]="item.content">
+              </p>
+              <div class="row">
+                <div class="col text-end">
+                  <button
+                    mat-raised-button
+                    (click)="item.action()"
+                    color="primary"
+                  >
+                    {{ item.action_name }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 col-lg-7">
+      <div class="row pb-5">
+        <div class="col">
+          <app-user-question-answer-chart></app-user-question-answer-chart>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-5">
+      <div class="row mb-5">
+        <div class="col">
+          <app-user-abi-card></app-user-abi-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<div
+  class="py-3"
+  routerLink="/questionmarket/singlequestion"
+  [queryParams]="{question_ID: item.data.question_ID, user_answer_ID: item.data.user_answer_ID, user_answer_review_ID: item.data.user_answer_review_ID, isReport: 1}"
+>
+  <i class="fa-thin fa-circle-exclamation"></i> Your report to the review #{{
+    item.data.user_answer_ID
+  }}
+  is denied. You get {{ item.data.punish_point }} punish point. If you have
+  any question please contact admin.
+</div>

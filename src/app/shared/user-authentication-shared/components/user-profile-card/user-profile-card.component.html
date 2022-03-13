@@ -1,0 +1,94 @@
+<mat-card *ngIf="userinfo">
+  <mat-card-content [formGroup]="userForm">
+    <div class="container p-0">
+      <div class="row align-items-center pb-3">
+        <div
+          class="col-4 d-flex flex-column align-items-center"
+          style="height: fit-content"
+        >
+          <div
+            style="
+                    width: 60px;
+                    height: 60px;
+                    background: url('{{
+              cdnfolder + userinfo.user_avatar!.media_name
+            }}') no-repeat center center / cover;
+            border-radius: 50%;
+            box-shadow: 0 9px 30px 0 rgb(119 63 254 / 38%), inset 0 -9px 6px 0 #cd9bfb73;
+                "
+          ></div>
+          <div class="row pt-3">
+            <div class="col text-center">
+              <button mat-raised-button color="accent" (click)="changeAvatar()">
+                <i class="fa-solid fa-camera"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-8" style="height: fit-content">
+          <mat-form-field>
+            <mat-label> User name </mat-label>
+            <input
+              type="text"
+              matInput
+              autocomplete="off"
+              formControlName="user_name"
+            />
+          </mat-form-field>
+          <div class="row pb-3">
+            <div class="col">
+              <mat-radio-group formControlName="user_gender">
+                <div class="row justify-content-around">
+                  <div class="col-auto">
+                    <mat-radio-button value="Male">Male</mat-radio-button>
+                  </div>
+                  <div class="col-auto">
+                    <mat-radio-button value="Female">Female</mat-radio-button>
+                  </div>
+                </div>
+              </mat-radio-group>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col text-end">
+                <button mat-raised-button color="accent" (click)="saveInfo()">
+                  <i class="fa-solid fa-floppy-disk me-2"></i>Save
+                </button>
+            </div>
+        </div>
+        </div>
+      </div>
+      <div class="row justify-content-center pb-3">
+        <div class="col-auto">
+          <button mat-raised-button (click)="changePassword()">
+            <i class="fa-solid fa-key me-2"></i> Change password
+          </button>
+        </div>
+        <div class="col-auto">
+          <button mat-raised-button (click)="openInventory()">
+            <i class="fa-solid fa-sack"></i>
+          </button>
+        </div>
+      </div>
+      <div class="row pb-3">
+          <div class="col">
+              <mat-divider></mat-divider>
+          </div>
+      </div>
+      <div class="row pb-3 justify-content-around">
+          <div class="col-auto">
+            <i class="fa-thin fa-circle-dollar me-2"></i> 24
+          </div>
+          <div class="col-auto">
+            <i class="fa-thin fa-crown me-2"></i> 2
+          </div>
+      </div>
+      <div class="row pb-2">
+          <div class="col">
+            <mat-progress-bar mode="determinate" [value]="lvprogress"></mat-progress-bar>
+            <mat-hint>Exp.: {{userinfo.user_experience}} / {{ userinfo.levelup_points }}</mat-hint>
+          </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

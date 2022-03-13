@@ -1,0 +1,7 @@
+<div class="container p-0" *ngIf="questionlist">
+  <div class="row" *ngFor="let item of questionlist">
+    <div class="col">
+      <app-single-blog-card [q_data]="item"></app-single-blog-card>
+    </div>
+  </div>
+</div>

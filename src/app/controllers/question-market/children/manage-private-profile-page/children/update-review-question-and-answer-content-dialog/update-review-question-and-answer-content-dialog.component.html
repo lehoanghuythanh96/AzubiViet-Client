@@ -1,0 +1,68 @@
+<div class="row" mat-dialog-title>
+  <div class="col text-end">
+    <button mat-button (click)="dialogRef.close()">Close</button>
+  </div>
+</div>
+<mat-dialog-content>
+  <div class="container p-0" *ngIf="new_question && new_answer">
+    <div class="row">
+      <div class="col">
+        <p>
+          <u><b>New Question Title:</b></u>
+        </p>
+        <p [innerHTML]="new_question.post_title"></p>
+        <p>
+          <u><b>New Question Content:</b></u>
+        </p>
+        <p [innerHTML]="new_question.post_content"></p>
+        <div class="row mb-3" *ngIf="question_imgnames.length > 0">
+          <div class="col">
+            <app-image-viewer
+              [image_names]="question_imgnames"
+            ></app-image-viewer>
+          </div>
+        </div>
+        <p>
+          <u><b>New Answer Content:</b></u>
+        </p>
+        <p [innerHTML]="new_answer.answer_content"></p>
+        <div class="row mb-3" *ngIf="original_answer_imgnames.length > 0">
+          <div class="col">
+            <app-image-viewer
+              [image_names]="original_answer_imgnames"
+            ></app-image-viewer>
+          </div>
+        </div>
+        <p>
+          <u><b>Your Answer:</b></u>
+        </p>
+        <p [innerHTML]="user_answer.answer_content"></p>
+        <div class="row mb-3" *ngIf="user_answer_IMGs.length > 0">
+          <div class="col">
+            <app-image-viewer
+              [image_names]="user_answer_IMGs"
+            ></app-image-viewer>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="container p-0">
+    <div class="row justify-content-between">
+      <div class="col-auto"></div>
+      <div class="col-auto">
+        <button mat-mini-fab color="primary" (click)="confirmUpdate()">
+          <i class="fa-light fa-arrows-rotate"></i>
+        </button>
+        <button mat-mini-fab color="accent" (click)="requireFixReview()">
+          <i class="fa-light fa-lock-keyhole"></i>
+        </button>
+        <button mat-mini-fab color="warn" cdkFocusInitial (click)="userSkipUpdate()">
+          <i class="fa-light fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</mat-dialog-actions>

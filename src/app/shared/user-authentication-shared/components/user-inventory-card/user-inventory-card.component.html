@@ -1,0 +1,19 @@
+<div class="container p-0">
+    <div class="row">
+        <div class="col">
+            <p class="h5">
+                <img class="me-2" src="assets/img/questionmarket/icons8-treasure-64.png" alt="Inventory" width="40" height="40"> Your Inventory
+            </p>
+        </div>
+    </div>
+    <div class="row pb-3">
+        <div class="col">
+            <mat-divider></mat-divider>
+        </div>
+    </div>
+    <div class="row" *ngIf="items && cdnpath">
+        <div class="col-auto" *ngFor="let item of items">
+            <app-single-inventory-item [item]="item" [cdnpath]="cdnpath"></app-single-inventory-item>
+        </div>
+    </div>
+</div>

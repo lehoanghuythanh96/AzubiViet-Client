@@ -1,0 +1,17 @@
+<mat-dialog-content>
+    <p>
+        <b>
+            {{data.user_name}}:
+        </b>
+    </p>
+    <p>
+        "{{data.message_content}}"
+    </p>
+    <div class="row">
+        <div class="col text-end">
+            <button mat-raised-button color="warn" (click)="requireKickUser()">
+                <i class="fa-thin fa-ban me-2"></i>Kick user
+            </button>
+        </div>
+    </div>
+</mat-dialog-content>

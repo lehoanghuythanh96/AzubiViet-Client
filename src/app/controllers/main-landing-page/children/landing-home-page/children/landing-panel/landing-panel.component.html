@@ -1,0 +1,38 @@
+<div class="container-fluid p-0 mb-5">
+  <div class="row">
+    <div class="col">
+      <swiper [config]="config">
+        <ng-template swiperSlide *ngFor="let item of imgurls">
+          <div
+            style="
+                      width: 100%;
+                      background: url('{{
+              item
+            }}') no-repeat center center / cover;
+                  "
+          >
+            <div class="container p-0" style="height: 60vh">
+              <div
+                class="row justify-content-center align-items-center"
+                style="height: 100%"
+              >
+                <div class="col-auto text-center" style="height: fit-content">
+                  <mat-card style="py-4">
+                    <mat-card-content>
+                      <p class="h3">
+                        {{ panelText.title }}
+                      </p>
+                      <p>
+                        {{ panelText.subtitle }}
+                      </p>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </swiper>
+    </div>
+  </div>
+</div>

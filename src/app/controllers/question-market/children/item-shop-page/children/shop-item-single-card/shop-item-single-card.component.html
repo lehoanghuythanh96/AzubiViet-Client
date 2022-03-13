@@ -1,0 +1,45 @@
+<mat-card>
+  <mat-card-content>
+    <p class="h5">
+      {{ item.item_name }}
+    </p>
+    <div class="row py-3">
+      <div class="col text-center">
+        <img [src]="cdnpath + item.item_avatar" alt="" width="60" height="60" />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-muted">
+        <p>Description: {{ item.item_description }}</p>
+      </div>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            <button mat-button (click)="changeAmount(-1)">
+                <i class="fa-thin fa-minus"></i>
+            </button>
+            <mat-form-field style="width:30px">
+                <input name="ShopItemAmount" type="text" matInput autocomplete="off" [formControl]="amount">
+            </mat-form-field>
+            <button mat-button (click)="changeAmount(1)">
+                <i class="fa-thin fa-plus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="row justify-content-between">
+      <div class="col-auto d-flex align-items-center">
+        <img
+          class="me-2"
+          src="assets/img/questionmarket/icons8-coin-64.png"
+          alt=""
+          width="20"
+          height="20"
+        />
+        <b>{{ item.item_price }}</b>
+      </div>
+      <div class="col-auto">
+        <button mat-raised-button color="primary" (click)="buy()">Buy</button>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

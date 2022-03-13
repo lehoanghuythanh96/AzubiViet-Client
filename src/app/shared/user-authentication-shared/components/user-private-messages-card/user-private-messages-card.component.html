@@ -1,0 +1,64 @@
+<mat-dialog-content>
+  <div class="container-fluid p-0">
+    <p class="text-center h5 m-0">
+      <i class="fa-thin fa-envelope me-2"></i> Your mailbox
+    </p>
+    <div class="row py-2" *ngFor="let item of allMsgs; index as i">
+      <div class="col">
+        <div class="row" (click)="openOptions[i] = !openOptions[i]">
+          <div class="col">
+            <div class="row">
+              <div class="col">
+                <mat-hint>
+                  <u>
+                    {{ item.sender_email }}
+                  </u>
+                </mat-hint>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">"{{ item.message_content }}"</div>
+            </div>
+            <div class="row">
+              <div class="col text-end" style="font-size: 10px">
+                {{ item.message_date | date: "short"}}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-between pt-2" *ngIf="openOptions[i]">
+          <div class="col-auto">
+            <button
+              type="button"
+              class="btn btn-sm btn-secondary"
+              (click)="userBlockEmail(item.ID)"
+            >
+              <i class="fa-thin fa-ban me-2"></i>Block
+            </button>
+          </div>
+          <div class="col-auto">
+            <button type="button" class="btn btn-sm btn-danger">
+              <i class="fa-thin fa-trash-can me-2"></i>Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="container-fluid p-0">
+    <div class="row">
+      <div class="col text-end">
+        <p class="p-0">
+          <mat-hint><small>Click on message to see options</small></mat-hint>
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-end">
+        <button mat-button mat-dialog-close cdkFocusInitial>Close</button>
+      </div>
+    </div>
+  </div>
+</mat-dialog-actions>

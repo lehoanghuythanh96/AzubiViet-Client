@@ -1,0 +1,254 @@
+<div class="container" *ngIf="(!question || !user_answer) && (!is_reported)">
+  <div class="row">
+    <div class="col">This notification is not valid anymore.</div>
+  </div>
+</div>
+<div class="container" *ngIf="question">
+  <div class="row mb-5 justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-6">
+      <div
+        style="
+                        width: 100%;
+                        height: 400px;
+                        max-height: 60vh;
+                        border-radius: 10px;
+                        background: url('{{
+          cdnfolder + question.question_avatar.media_name
+        }}') no-repeat center center / cover;
+                    "
+      ></div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-6">
+      <mat-card>
+        <p class="h3 text-center" [innerHTML]="question.post_title"></p>
+        <p>
+          <u
+            ><b><i class="fa-thin fa-block-question me-2"></i> Question:</b></u
+          >
+        </p>
+        <div class="mb-3" [innerHTML]="question.post_content"></div>
+        <div class="row mb-3" *ngIf="question_imgnames.length > 0">
+          <div class="col">
+            <app-image-viewer
+              [image_names]="question_imgnames"
+            ></app-image-viewer>
+          </div>
+        </div>
+        <div class="row pb-3">
+          <div class="col">
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+        <div class="row" *ngIf="user_answer">
+          <div class="col">
+            <div class="row" *ngIf="!user_answer_review">
+              <div class="col">
+                <p class="text-danger">
+                  <b
+                    ><u
+                      ><i class="fa-thin fa-marker me-2"></i> Reported
+                      answer:</u
+                    ></b
+                  >
+                </p>
+                <div
+                  class="mb-3"
+                  [innerHTML]="user_answer.answer_content"
+                ></div>
+                <div class="row mb-3" *ngIf="user_answer_imgnames.length > 0">
+                  <div class="col">
+                    <app-image-viewer
+                      [image_names]="user_answer_imgnames"
+                    ></app-image-viewer>
+                  </div>
+                </div>
+                <div class="row" *ngIf="report_notes">
+                  <div class="col">
+                    <p>
+                      <b
+                        ><u
+                          ><i class="fa-thin fa-flag me-2"></i> What does the
+                          reporter say:</u
+                        ></b
+                      >
+                    </p>
+                    <p [innerHTML]="report_notes"></p>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <p class="text-center h5">
+                      <b><u>Who is wrong here?</u></b>
+                    </p>
+                    <div class="row mb-3 justify-content-around">
+                      <div class="col-auto">
+                        <button
+                          mat-raised-button
+                          color="warn"
+                          (click)="confirmReport(true)"
+                        >
+                          <i class="fa-thin fa-marker"></i> The answerer
+                        </button>
+                      </div>
+                      <div class="col-auto">
+                        <button
+                          mat-raised-button
+                          color="accent"
+                          (click)="confirmReport(false)"
+                        >
+                          <i class="fa-thin fa-flag"></i> The reporter
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row" *ngIf="user_answer_review">
+              <div class="col">
+                <p>
+                  <b
+                    ><u
+                      ><i class="fa-thin fa-marker me-2"></i>User answer:</u
+                    ></b
+                  >
+                </p>
+                <div
+                  class="mb-3"
+                  [innerHTML]="user_answer.answer_content"
+                ></div>
+                <div class="row mb-3" *ngIf="user_answer_imgnames.length > 0">
+                  <div class="col">
+                    <app-image-viewer
+                      [image_names]="user_answer_imgnames"
+                    ></app-image-viewer>
+                  </div>
+                </div>
+                <p class="text-success">
+                  <b
+                    ><u
+                      ><i class="fa-thin fa-circle-check me-2"></i>Original
+                      answer:</u
+                    ></b
+                  >
+                </p>
+                <div
+                  class="mb-3"
+                  [innerHTML]="original_answer.answer_content"
+                ></div>
+                <div
+                  class="row mb-3"
+                  *ngIf="original_answer_imgnames.length > 0"
+                >
+                  <div class="col">
+                    <app-image-viewer
+                      [image_names]="original_answer_imgnames"
+                    ></app-image-viewer>
+                  </div>
+                </div>
+                <p class="text-danger">
+                  <b
+                    ><u
+                      ><i class="fa-thin fa-circle-exclamation me-2"></i
+                      >Reported review:</u
+                    ></b
+                  >
+                </p>
+                <div
+                  class="mb-3"
+                  [innerHTML]="user_answer_review.review_content"
+                ></div>
+                <div class="row" *ngIf="report_notes">
+                  <div class="col">
+                    <p>
+                      <b
+                        ><u
+                          ><i class="fa-thin fa-flag me-2"></i> What does the
+                          reporter say:</u
+                        ></b
+                      >
+                    </p>
+                    <p [innerHTML]="report_notes"></p>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <p class="text-center h5">
+                      <b><u>Who is wrong here?</u></b>
+                    </p>
+                    <div class="row mb-3 justify-content-around">
+                      <div class="col-auto">
+                        <button
+                          mat-raised-button
+                          color="warn"
+                          (click)="confirmReport(true)"
+                        >
+                          <i class="fa-thin fa-marker"></i> The reviewer
+                        </button>
+                      </div>
+                      <div class="col-auto">
+                        <button
+                          mat-raised-button
+                          color="accent"
+                          (click)="confirmReport(false)"
+                        >
+                          <i class="fa-thin fa-flag"></i> The reporter
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row" *ngIf="!user_answer && question.is_reported">
+          <div class="col">
+            <p class="text-danger">
+              <b
+                ><u
+                  ><i class="fa-thin fa-flag-swallowtail me-2"></i>This question
+                  is reported</u
+                ></b
+              >
+            </p>
+            <p>
+              <u>Report notes:</u>
+            </p>
+            <p [innerHTML]="question.report_notes"></p>
+            <div class="row">
+              <div class="col">
+                <p class="text-center h5">
+                  <b><u>Who is wrong here?</u></b>
+                </p>
+                <div class="row mb-3 justify-content-around">
+                  <div class="col-auto">
+                    <button
+                      mat-raised-button
+                      color="warn"
+                      (click)="confirmReport(true)"
+                    >
+                      <i class="fa-thin fa-marker"></i> Question author
+                    </button>
+                  </div>
+                  <div class="col-auto">
+                    <button
+                      mat-raised-button
+                      color="accent"
+                      (click)="confirmReport(false)"
+                    >
+                      <i class="fa-thin fa-flag"></i> The reporter
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>

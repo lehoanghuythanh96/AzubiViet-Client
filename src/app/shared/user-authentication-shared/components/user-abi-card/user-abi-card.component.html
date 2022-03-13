@@ -1,0 +1,81 @@
+<div class="container p-0 mb-5 mb-md-0">
+  <div class="row justify-content-center">
+    <div class="col" *ngIf="!userinfo">
+      <div
+        style="
+          width: auto;
+          min-height: 250px;
+          background: url('assets/img/landingpage/Marketing_strategy_SVG.svg')
+            no-repeat center center / contain;
+        "
+      ></div>
+    </div>
+    <div class="col-auto">
+      <div class="card" *ngIf="userinfo">
+        <div class="card-text">
+          <div
+            class="portada"
+            style="
+                width: 100%;
+                height: 100%;
+                border-top-left-radius: 20px;
+                border-bottom-left-radius: 20px;
+                background-image: url('{{
+              cdnfolder + userinfo.user_avatar!.media_name
+            }}');
+                background-position: bottom center;
+                background-size: cover;
+              "
+          ></div>
+          <div class="title-total">
+            <div class="row pb-3 justify-content-end">
+              <div class="col-auto">
+                <mat-chip-list aria-label="Fish selection">
+                  <mat-chip color="primary" selected>AzubiViet Card</mat-chip>
+                </mat-chip-list>
+              </div>
+            </div>
+            <p class="h5">{{ userinfo.user_name }}</p>
+
+            <p class="text-end">
+              
+            </p>
+            <div class="row justify-content-between pb-2">
+              <div class="col-auto">
+                <i class="fa-thin fa-circle-dollar me-2"></i> {{ userinfo.user_abicoin }}
+              </div>
+              <div class="col-auto">
+                <i class="fa-thin fa-crown me-2"></i>Lv. {{ userinfo.user_level }}
+              </div>
+            </div>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="lvprogress"
+            ></mat-progress-bar>
+            <mat-hint
+              >Exp.: {{ userinfo.user_experience }} /
+              {{ userinfo.levelup_points }}</mat-hint
+            >
+
+            <div class="desc"></div>
+            <div class="actions">
+              <button
+                mat-button
+                color="accent"
+                routerLink="/questionmarket/userprofile"
+              >
+                <i class="fa-thin fa-folder-gear"></i>
+              </button>
+              <button mat-button color="accent" (click)="openMesssageDialog()">
+                <i class="fa-thin fa-envelope"></i>
+              </button>
+              <button mat-button color="accent" (click)="openInventory()">
+                <i class="fa-thin fa-sack"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

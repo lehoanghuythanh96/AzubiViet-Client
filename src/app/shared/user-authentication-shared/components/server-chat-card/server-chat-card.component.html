@@ -1,0 +1,75 @@
+<div class="container p-0">
+  <div class="row" *ngIf="!chatOn">
+    <div class="col">
+      <app-choose-chat-server-card></app-choose-chat-server-card>
+    </div>
+  </div>
+  <div class="row" *ngIf="chatOn">
+    <div class="col">
+      <mat-card>
+        <div class="row justify-content-between align-items-center pb-2">
+          <div class="col-8" style="height: fit-content">
+            <p class="h6 m-0">
+              {{ server_name }}
+            </p>
+          </div>
+          <div class="col-4 text-end" style="height: fit-content">
+            <button mat-button (click)="leaveRoom()">
+              <i class="fa-thin fa-right-from-bracket"></i>
+            </button>
+          </div>
+        </div>
+        <div class="row pb-2">
+          <div class="col">
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+        <div
+        #chatRoom
+          class="container p-0"
+          style="
+            min-height: 300px;
+            height: 300px;
+            min-height: 300px;
+            height: 300px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            position: relative;
+          "
+        >
+          <div class="row" *ngFor="let item of chat_items" (click)="openUserDialog(item.user_ID,item.user_name,item.message_content)">
+            <div class="col">
+              <p class="text-muted m-0">{{ item.user_name }}:</p>
+              <p>
+                {{ item.message_content }}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="row align-items-center">
+          <div class="col-9">
+            <mat-form-field (keydown.enter)="sendMsg()">
+              <mat-label> Type something... </mat-label>
+              <input
+                type="text"
+                matInput
+                autocomplete="off"
+                [formControl]="msg_content"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-3" style="height: fit-content">
+            <button mat-button (click)="sendMsg()" cdkFocusInitial>
+              <i class="fa-thin fa-paper-plane-top h5 m-0"></i>
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <mat-checkbox [formControl]="chatAutoScroll">Auto scroll</mat-checkbox>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>

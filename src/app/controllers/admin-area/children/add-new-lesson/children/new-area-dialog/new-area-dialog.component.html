@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Add new area</h1>
+<div mat-dialog-content>
+  <p>Which area do you want to add?</p>
+  <mat-form-field appearance="fill">
+    <mat-label>Area name</mat-label>
+    <input matInput #areaname>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onclose()">Close</button>
+  <button mat-raised-button cdkFocusInitial color="primary" (click)="confirmarea(areaname.value)">Ok</button>
+</div>

@@ -1,0 +1,28 @@
+<mat-drawer-container autosize [hasBackdrop]="isLargeScreen ? false : true">
+  <mat-drawer
+    class="left-sidebar"
+    [opened]="openLeftSideBar"
+    [mode]="isLargeScreen ? 'side' : 'over'"
+    position="start"
+    (openedChange)="leftSidebarMovement($event)"
+  >
+    <app-left-sidebar></app-left-sidebar>
+  </mat-drawer>
+  <mat-drawer
+    class="right-sidebar"
+    [opened]="openRightSideBar"
+    [mode]="isLargeScreen ? 'side' : 'over'"
+    position="end"
+    (openedChange)="rightSidebarMovement($event)"
+  >
+    <app-right-sidebar></app-right-sidebar>
+  </mat-drawer>
+  <mat-drawer-content>
+    <app-header></app-header>
+    <div class="row py-5">
+      <div class="col">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </mat-drawer-content>
+</mat-drawer-container>

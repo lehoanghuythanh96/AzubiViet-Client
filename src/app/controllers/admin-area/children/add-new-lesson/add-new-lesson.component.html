@@ -1,0 +1,125 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-lg-8 mb-5 mb-lg-0">
+      <form [formGroup]="lessonForm">
+        <div class="row">
+          <div class="col">
+            <p *ngIf="!neworedit"><button color="primary" mat-stroked-button (click)="_newLesson()"><i class="fal fa-long-arrow-left me-2"></i><span>New Lesson</span></button></p>
+            <h3 *ngIf="neworedit">New Lesson:</h3>
+            <h3 *ngIf="!neworedit">Edit Lesson number: {{ editID }}</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <mat-form-field appearance="legacy">
+              <mat-label> Title </mat-label>
+              <input type="text" matInput formControlName="post_title" maxlength="255"/>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="container">
+              <quill-editor
+                [modules]="modules"
+                theme="snow"
+                formControlName="post_content"
+              >
+              </quill-editor>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col">
+            <mat-card>
+              <div class="row mt-3" *ngIf="lessonForm.value.post_avatar">
+                <div class="col">
+                  <p><strong>Current avatar:</strong></p>
+                  <img [src]="cdnfolder + lessonForm.value.post_avatar" style="height:80px; width:auto;" alt="">
+                </div>
+              </div>
+              <div class="row my-3">
+                <div class="col">
+                  <div class="mb-3">
+                    <label for="formFile" class="form-label"
+                      >Avatar for this lesson (Required)</label
+                    >
+                    <input
+                      class="form-control"
+                      type="file"
+                      (input)="uploadfile($event.target)"
+                    />
+                  </div>
+                  <mat-hint *ngIf="uploadimgbyfilesuccess">
+                    <span class="text-success">Image uploaded successfully</span>
+                  </mat-hint>
+                  <mat-progress-bar
+                    *ngIf="uploadimgbyfiletoggle"
+                    mode="determinate"
+                    [value]="upimgformpercent"
+                  ></mat-progress-bar>
+                  <mat-error *ngIf="uploadimgbyfileerror">
+                    {{ uploadimgbyfileinfo }}
+                  </mat-error>
+                  <div class="mt-3">
+                    <mat-label> Or use an image url </mat-label>
+                    <div class="input-group my-3">
+                      <input
+                        #urltreeavatar
+                        type="text"
+                        class="form-control"
+                        aria-describedby="button-addon2"
+                      />
+                      <button
+                        class="btn btn-outline-secondary"
+                        type="button"
+                        id="button-addon2"
+                        (click)="uploadfilebyurl(urltreeavatar.value)"
+                      >
+                        Submit
+                      </button>
+                    </div>
+                    <div *ngIf="uploadimgbyurltoggle">
+                      <mat-progress-bar mode="query"></mat-progress-bar>
+                    </div>
+                    <mat-hint *ngIf="uploadimgbyurlsuccess">
+                      <span class="text-success">Image uploaded successfully</span>
+                    </mat-hint>
+                    <mat-error *ngIf="uploadimgbyurlerror">
+                      {{ uploadimgbyurlinfo }}
+                    </mat-error>
+                  </div>
+                </div>
+              </div>
+            </mat-card>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="col-12 col-lg-4">
+      <div class="row">
+        <div class="col">
+          <app-add-lesson-area-selector></app-add-lesson-area-selector>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <app-add-lesson-category-selector></app-add-lesson-category-selector>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <button *ngIf="!publishloading" mat-raised-button color="accent" (click)="publish()">
+            Publish lesson
+          </button>
+          <mat-progress-bar mode="query" *ngIf="publishloading"></mat-progress-bar>
+        </div>
+      </div>
+      <div class="row my-4">
+        <div class="col">
+          <app-manage-post-table></app-manage-post-table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

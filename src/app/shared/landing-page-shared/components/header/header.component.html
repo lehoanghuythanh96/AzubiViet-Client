@@ -1,0 +1,32 @@
+<div class="container-fluid sticky-top">
+  <div class="row py-2 justify-content-between">
+    <div class="col-auto">
+      <img src="assets/img/landingpage/logo-azubiViet.png" alt="logo azubiviet" width="40" height="40">
+    </div>
+    <div class="col-auto">
+      <button mat-button (click)="toggleRightSidebar()">
+        <i class="fa-thin fa-message-captions"></i>
+      </button>
+      <button class="nav-item" mat-button [matMenuTriggerFor]="usernotifications" *ngIf="userinfo">
+        <i class="fa-thin fa-bells"></i>
+      </button>
+      <mat-menu #usernotifications="matMenu" [hasBackdrop]="true">
+        <app-user-notification-card></app-user-notification-card>
+      </mat-menu>
+      <button class="nav-item" mat-button [matMenuTriggerFor]="userMenu">
+        <i class="fa-thin fa-user"></i>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item (click)="checkInfo()" *ngIf="userinfo">
+          <i class="fa-thin fa-user me-2"></i>Check your info
+        </button>
+        <button mat-menu-item (click)="openLoginDialog()" *ngIf="!userinfo">
+          <i class="fa-thin fa-right-to-bracket me-2"></i>Log in
+        </button>
+        <button mat-menu-item (click)="logOut()" *ngIf="userinfo">
+          <i class="fa-thin fa-right-from-bracket me-2"></i>Log out
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+</div>

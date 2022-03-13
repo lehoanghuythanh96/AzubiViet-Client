@@ -1,0 +1,9 @@
+<mat-form-field appearance="legacy">
+  <mat-label>Choose an area</mat-label>
+  <mat-select #areaselect (selectionChange)="emitarea($event.value)">
+    <mat-option (click)="openAddAreaDialog()"> Add new area </mat-option>
+    <mat-option *ngFor="let area of arealist" [value]="area.ID">{{
+      area.area_name
+    }}</mat-option>
+  </mat-select>
+</mat-form-field>

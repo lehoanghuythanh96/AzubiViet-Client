@@ -1,0 +1,60 @@
+<div class="container p-0">
+  <div class="row">
+    <div class="col">
+      <table mat-table [dataSource]="dataSource" style="width: 100%">
+        <ng-container matColumnDef="content">
+          <th mat-header-cell *matHeaderCellDef style="width: 80%">
+            New Q & A<br />
+            <mat-hint><small>(Click on item to view)</small></mat-hint>
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            (click)="openDialog(element.ID)"
+          >
+            <div class="row">
+              <div class="col">{{ element.item_content.substr(0, 42) }}...</div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <button type="button" class="btn btn-sm btn-success" *ngIf="userinfo && element.user_ID == userinfo.ID">
+                  Your question
+                </button>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef style="width: 20%">Status</th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            (click)="openDialog(element.ID)"
+          >
+            <button
+              type="button"
+              class="btn btn-sm"
+              [ngClass]="{
+                'btn-primary': element.QA_status == 'Waiting',
+                'btn-success': element.QA_status == 'Answered',
+                'btn-danger': element.QA_status == 'Closed'
+              }"
+            >
+              {{ element.QA_status }}
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 20]"
+        showFirstLastButtons
+        aria-label="Select page of periodic elements"
+      >
+      </mat-paginator>
+    </div>
+  </div>
+</div>

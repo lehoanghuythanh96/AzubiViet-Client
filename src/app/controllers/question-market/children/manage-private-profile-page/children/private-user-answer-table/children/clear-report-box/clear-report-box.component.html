@@ -1,0 +1,16 @@
+<mat-dialog-content>
+  <div class="row">
+    <div class="col text-center">
+      <p class="h5">Report Fighter</p>
+      <p>
+        <img [src]="hero_avatar" alt="Hero icon" width="40" />
+      </p>
+      <p>Do you want to let hero fighter clear this report for you?</p>
+      <p>
+          <button mat-raised-button color="primary" (click)="confirmClear()">
+            <i class="fa-regular fa-thumbs-up h6 m-0"></i> OK
+          </button>
+      </p>
+    </div>
+  </div>
+</mat-dialog-content>

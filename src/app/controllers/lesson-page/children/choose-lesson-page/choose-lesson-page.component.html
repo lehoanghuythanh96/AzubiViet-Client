@@ -1,0 +1,54 @@
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <p>
+        Choose a
+        <button mat-raised-button color="primary" (click)="toggleLeftSidebar()">
+          Topic
+        </button>
+        or a lesson below:
+      </p>
+    </div>
+  </div>
+  <div class="row">
+    <div
+      class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-4"
+      *ngFor="let item of lessoninfo"
+    >
+      <mat-card routerLink="/learning/single" [queryParams]="{ID: item.ID}" style="cursor: pointer">
+        <mat-card-content>
+          <div class="row">
+            <div class="col">
+              <div
+                style="width: 100%; height: 150px; background: url('{{
+                  cdnpath + item.lesson_avatar.media_name
+                }}') no-repeat center center/ cover;"
+              ></div>
+              <p
+                class="mt-2"
+                style="
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                "
+              >
+                {{ item.post_title }}
+              </p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+<div class="container-fluid fixed-bottom bg-light py-2">
+  <div class="row justify-content-center">
+    <div class="col-auto">
+      <mat-form-field>
+       <mat-label><i class="fa-thin fa-magnifying-glass"></i> Search</mat-label>
+       <input type="text" matInput placeholder="Write something to search..." [formControl]="searchKey">
+      </mat-form-field>
+    </div>
+  </div>
+</div>
+<app-particle-bg></app-particle-bg>

@@ -1,0 +1,9 @@
+<mat-drawer-container autosize hasBackdrop="false">
+  <mat-drawer #leftdrawer [opened]="false" [mode]="'over'">
+    <app-left-sidebar></app-left-sidebar>
+  </mat-drawer>
+  <mat-drawer-content>
+    <app-header (click)="leftdrawer.toggle()"></app-header>
+    <router-outlet></router-outlet>
+  </mat-drawer-content>
+</mat-drawer-container>

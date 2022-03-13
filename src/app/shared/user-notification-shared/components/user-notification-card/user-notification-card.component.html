@@ -1,0 +1,108 @@
+<button mat-menu-item *ngIf="allnotifications.length == 0">
+  You have no notification
+</button>
+<button
+  mat-menu-item
+  *ngFor="let item of allnotifications"
+  style="height: fit-content; min-height: 48px"
+>
+  <div class="container p-0">
+    <div class="row">
+      <div
+        class="col"
+        style="font-size: 12px; line-height: 1.3em; white-space: break-spaces"
+      >
+        <app-question-market-review-user-answer
+          [item]="item"
+          *ngIf="item.type == NotiTypes.please_check_user_answer"
+        ></app-question-market-review-user-answer>
+        <app-user-review-is-liked
+          [item]="item"
+          *ngIf="item.type == NotiTypes.review_isLiked"
+        >
+        </app-user-review-is-liked>
+        <app-user-answer-is-reviewed
+          [item]="item"
+          *ngIf="item.type == NotiTypes.answer_isReviewed"
+        ></app-user-answer-is-reviewed>
+        <app-user-answer-is-reported
+          [item]="item"
+          *ngIf="item.type == NotiTypes.answer_isReported"
+        ></app-user-answer-is-reported>
+        <app-the-answerer-is-punished
+          [item]="item"
+          *ngIf="item.type == NotiTypes.answerer_isPunished"
+        ></app-the-answerer-is-punished>
+        <app-user-answer-reporter-is-punished
+          [item]="item"
+          *ngIf="item.type == NotiTypes.user_answer_reporter_isPunished"
+        ></app-user-answer-reporter-is-punished>
+        <app-user-answer-review-is-reported
+          [item]="item"
+          *ngIf="item.type == NotiTypes.useranswer_review_isReported"
+        ></app-user-answer-review-is-reported>
+        <app-useranswer-reviewer-is-punished
+          [item]="item"
+          *ngIf="item.type == NotiTypes.useranswer_reviewer_isPunished"
+        ></app-useranswer-reviewer-is-punished>
+        <app-useranswer-review-reporter-is-punished
+          [item]="item"
+          *ngIf="item.type == NotiTypes.useranswer_review_Reporter_isPunished"
+        ></app-useranswer-review-reporter-is-punished>
+        <app-question-product-is-reported
+          [item]="item"
+          *ngIf="item.type == NotiTypes.questionProduct_isReported"
+        ></app-question-product-is-reported>
+        <app-question-author-is-punished
+          [item]="item"
+          *ngIf="item.type == NotiTypes.questionAuthor_isPunished"
+        ></app-question-author-is-punished>
+        <app-questionproduct-reporter-id-punished
+          [item]="item"
+          *ngIf="item.type == NotiTypes.questionProduct_Reporter_isPunished"
+        ></app-questionproduct-reporter-id-punished>
+        <app-qa-question-item-is-reported
+          [item]="item"
+          *ngIf="item.type == NotiTypes.QA_QuestionItem_isReported"
+        ></app-qa-question-item-is-reported>
+        <app-qa-question-author-is-punished
+          [item]="item"
+          *ngIf="item.type == NotiTypes.QA_QuestionAuthor_isPunished"
+        ></app-qa-question-author-is-punished>
+        <app-qa-question-item-reporter-is-punished
+          [item]="item"
+          *ngIf="item.type == NotiTypes.QA_QuestionItem_Reporter_isPunished"
+        ></app-qa-question-item-reporter-is-punished>
+        <app-qa-answer-item-is-reported
+          [item]="item"
+          *ngIf="item.type == NotiTypes.QA_AnswerItem_isReported"
+        ></app-qa-answer-item-is-reported>
+        <app-qa-answer-author-is-punished
+          [item]="item"
+          *ngIf="item.type == NotiTypes.QA_AnswerAuthor_isPunished"
+        ></app-qa-answer-author-is-punished>
+        <app-qa-answer-item-reporter-is-punished
+          [item]="item"
+          *ngIf="item.type == NotiTypes.QA_AnswerItem_Reporter_isPunished"
+        ></app-qa-answer-item-reporter-is-punished>
+        <!-- <div class="row">
+            <div class="col text-end">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                style="font-size: 10px; padding: 0 2px"
+                [matMenuTriggerFor]="actionMenu"
+                (click) = "$event.stopPropagation()"
+              >
+                Actions <i class="fa-light fa-caret-down"></i>
+              </button>
+              <mat-menu #actionMenu="matMenu">
+                <button mat-menu-item (click)="deleteNotiWithID(item.ID,item.type)">Delete</button>
+                <button mat-menu-item>Item 2</button>
+              </mat-menu>
+            </div>
+          </div> -->
+      </div>
+    </div>
+  </div>
+</button>

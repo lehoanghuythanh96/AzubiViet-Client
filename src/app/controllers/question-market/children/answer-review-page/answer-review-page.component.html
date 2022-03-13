@@ -1,0 +1,119 @@
+<div class="container" *ngIf="question && answer">
+  <div class="row mb-5 justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-6">
+      <div
+        style="
+                    width: 100%;
+                    height: 400px;
+                    max-height: 60vh;
+                    border-radius: 10px;
+                    background: url('{{
+          cdnfolder + question.question_avatar.media_name
+        }}') no-repeat center center / cover;
+                "
+      ></div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center" [formGroup]="reviewForm">
+    <div class="col-12 col-lg-8 col-xl-6">
+      <mat-card>
+        <p class="h3 text-center" [innerHTML]="question.post_title"></p>
+        <p>
+          <u><b><i class="fa-thin fa-block-question me-2"></i>Question:</b></u>
+        </p>
+        <div class="mb-3" [innerHTML]="question.post_content"></div>
+        <div class="row mb-3" *ngIf="question_imgnames.length > 0">
+          <div class="col">
+            <app-image-viewer
+              [image_names]="question_imgnames"
+            ></app-image-viewer>
+          </div>
+        </div>
+        <p>
+          <u><b><i class="fa-thin fa-pen-circle me-2"></i>User answer:</b></u>
+        </p>
+        <div class="mb-3" [innerHTML]="answer.answer_content"></div>
+        <div class="row mb-3" *ngIf="useranswer_imgnames.length > 0">
+          <div class="col">
+            <app-image-viewer
+              [image_names]="useranswer_imgnames"
+            ></app-image-viewer>
+          </div>
+        </div>
+        <p class="text-success">
+          <i><u><i class="fa-thin fa-circle-check me-2"></i>Original answer:</u></i
+          ><br />
+          <small
+            >If you think the original answer is incorrect, please tell the
+            author by
+            <u (click)="openfalseOriginalAnswerDialog()" style="cursor: pointer"
+              >this form</u
+            >
+          </small>
+        </p>
+        <div class="mb-3" [innerHTML]="original_answer"></div>
+        <div class="row mb-3" *ngIf="original_answer_imgnames.length > 0">
+          <div class="col">
+            <app-image-viewer
+              [image_names]="original_answer_imgnames"
+            ></app-image-viewer>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <p class="h3">
+              <u>Your Review:</u>
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <p>1. Is this answer right or wrong?</p>
+            <div class="row mb-3">
+              <mat-radio-group class="row justify-content-around" formControlName="correct">
+                <div class="col-auto">
+                  <mat-radio-button [value]="true">
+                    <i class="fa-thin fa-check me-2"></i>Right
+                  </mat-radio-button>
+                </div>
+                <div class="col-auto">
+                  <mat-radio-button [value]="false">
+                    <i class="fa-thin fa-xmark me-2"></i>Wrong
+                  </mat-radio-button>
+                </div>
+              </mat-radio-group>
+            </div>
+            <div class="row mb-3">
+              <div class="col">2. Write something about this answer:</div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="container p-0 mb-3">
+                  <quill-editor [modules]="modules" theme="snow" formControlName="review_content">
+                  </quill-editor>
+                </div>
+                <p>
+                  <small
+                    >*** By submitting this form, you are fully responsible for
+                    the correctness of your review.</small
+                  >
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col text-end">
+                <button mat-raised-button color="primary" (click)="submitForm()" class="me-2">
+                  <i class="fa-thin fa-check me-2"></i>Submit
+                </button>
+                <button mat-button (click)="openreportDialog()">
+                  Report
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>

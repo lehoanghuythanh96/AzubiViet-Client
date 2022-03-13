@@ -1,1 +1,94 @@
+@use "~@angular/material" as mat;
+@import "src/app/global_scss.scss";
+
 /* You can add global styles to this file, and also import other style files */
+
+/* ------------------------------- app theming ------------------------------ */
+
+@import "~@angular/material/theming";
+
+@include mat-core();
+
+@function my-mat-light-theme-foreground($color) {
+  @return (
+    base: $color,
+    divider: $black-12-opacity,
+    dividers: $black-12-opacity,
+    disabled: rgba($color, 0.38),
+    disabled-button: rgba($color, 0.38),
+    disabled-text: rgba($color, 0.38),
+    hint-text: rgba($color, 0.38),
+    secondary-text: rgba($color, 0.54),
+    icon: rgba($color, 0.54),
+    icons: rgba($color, 0.54),
+    text: rgba($color, 0.87),
+    slider-min: rgba($color, 0.87),
+    slider-off: rgba($color, 0.26),
+    slider-off-active: rgba($color, 0.38)
+  );
+}
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$yourable-app-primary: mat-palette($mat-indigo, A400);
+$yourable-app-accent: mat-palette($mat-deep-purple, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$yourable-app-warn: mat-palette($mat-red);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$my-app-light-theme: mat-light-theme(
+  $yourable-app-primary,
+  $yourable-app-accent,
+  $yourable-app-warn
+);
+
+$light-foreground: my-mat-light-theme-foreground(mat-color($mat-grey, 800));
+$yourable-app-light-theme: map-merge(
+  $my-app-light-theme,
+  (
+    foreground: $light-foreground,
+  )
+);
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-color($yourable-app-light-theme);
+
+mat-card {
+  box-shadow: none !important;
+  border: none !important;
+}
+
+$custom-typography: mat-typography-config(
+  $font-family: $primary_font,
+);
+
+@include angular-material-typography($custom-typography);
+
+/* --------------------------------- Overall -------------------------------- */
+html,
+body {
+  min-height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, $primary_font, sans-serif;
+}
+
+.swiper-pagination-bullet-active {
+  background: white !important;
+}
+
+.ql-editor img {
+  max-width: 90%;
+  width: 500px;
+  height: auto;
+}
+
+.ql-editor {
+  font-family: $primary_font;
+}
+
+@import '~viewerjs/dist/viewer.css';

@@ -1,0 +1,99 @@
+<div class="blog-container" *ngIf="!isOwner">
+  <div class="blog-header">
+    <div
+      class="blog-cover"
+      style="background: url('{{
+        cdnfolder + question_avatar
+      }}') no-repeat center center / cover;"
+    >
+      <div class="blog-author pt-3">
+        <h3>
+          <img
+            class="me-2"
+            *ngIf="author_avatar"
+            [src]="authorcdnpath + author_avatar"
+            style="
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              background: white;
+            "
+          />
+          {{ author_name }}
+        </h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="blog-body py-4">
+    <div class="blog-title">
+      <h1>{{ q_data.post_title }}</h1>
+    </div>
+    <div class="blog-summary mb-3">
+      <div [innerHTML]="q_data.post_content"></div>
+    </div>
+    <div class="row" *ngIf="question_imgnames.length > 0">
+      <div class="col">
+        <p>
+          <u><i>Images:</i></u>
+        </p>
+      </div>
+    </div>
+    <div class="row mb-3" *ngIf="question_imgnames.length > 0">
+      <div class="col">
+        <app-image-viewer
+          [image_names]="question_imgnames"
+        ></app-image-viewer>
+      </div>
+    </div>
+    <p class="text-end text-muted">
+      <small>{{ q_data.post_date | date: "short" }}</small>
+    </p>
+    <div class="blog-tags" *ngIf="cat_list">
+      <ul>
+        <li *ngFor="let item of cat_list" [matTooltip]="item.category_name">
+          {{ item.category_name }}
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="row pb-3" *ngIf="isReplying && !answered">
+    <div class="col">
+      <app-product-answer-card
+        [question_ID]="q_data.ID"
+      ></app-product-answer-card>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+  <div class="container-fluid py-3">
+    <div class="row justify-content-between">
+      <div class="col-auto"></div>
+      <div class="col-auto">
+        <div class="row align-items-center">
+          <div class="col-auto" style="height: fit-content">
+            <mat-chip-list>
+              <mat-chip
+                color="primary"
+                selected
+                (click)="isReplying = !isReplying"
+                *ngIf="!answered"
+                >Reply</mat-chip
+              >
+              <mat-chip color="accent" selected routerLink="/questionmarket/singlequestion" [queryParams]="{question_ID: q_data.ID}">Details</mat-chip>
+            </mat-chip-list>
+          </div>
+          <div class="col-auto px-0" style="height: fit-content">
+            <button mat-button [matMenuTriggerFor]="postCardMenu">
+              <i class="fa-thin fa-gear"></i>
+            </button>
+            <mat-menu #postCardMenu="matMenu">
+              <button mat-menu-item (click)="openReportDialog()">
+                <i class="fa-thin fa-bug me-2"></i>Report
+              </button>
+            </mat-menu>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
