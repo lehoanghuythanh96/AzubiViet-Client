@@ -4,11 +4,11 @@
 
 export const environment = {
   production: false,
-  BASE_SOCKET_URL: "http://localhost:8080",
-  BASE_CDN_URL: "http://localhost:6478",
-  BASE_API_URL: "http://localhost:6478",
-  GG_CLIENT_ID: "998618646884-okn5n7a5e78haf4aeneaiub4fps6kpg9.apps.googleusercontent.com",
-  RECAPTCHA_SITE_KEY: "6LfTGIkeAAAAAGLVtJhkNA9fzMH3Y6S9faEypd6P"
+  BASE_SOCKET_URL: "http://localhost:8080", // Socket IO server
+  BASE_CDN_URL: "http://localhost:6478", // CDN Server
+  BASE_API_URL: "http://localhost:6478",  // Database server
+  GG_CLIENT_ID: "998618646884-okn5n7a5e78haf4aeneaiub4fps6kpg9.apps.googleusercontent.com", // GG login client ID
+  RECAPTCHA_SITE_KEY: "6LfTGIkeAAAAAGLVtJhkNA9fzMH3Y6S9faEypd6P" // Recaptcha site key
 };
 
 /*
