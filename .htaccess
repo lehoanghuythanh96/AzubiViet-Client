@@ -8,4 +8,4 @@ RewriteRule . /index.html [L]
 RewriteCond %{HTTPS} off 
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 </IfModule>
-DirectoryIndex ./dist/index.html
+DirectoryIndex ./dist/AzubiClient/index.html
