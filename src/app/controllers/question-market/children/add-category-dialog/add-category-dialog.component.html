@@ -3,10 +3,10 @@
   <p>Which category do you want to add?</p>
   <mat-form-field appearance="fill">
     <mat-label>Category name</mat-label>
-    <input matInput #catname>
+    <input matInput [formControl]="cat_name">
   </mat-form-field>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onclose()">Close</button>
-  <button mat-raised-button cdkFocusInitial color="primary" (click)="confirm(catname.value)">Ok</button>
+  <button mat-raised-button cdkFocusInitial color="primary" (click)="confirm()">Ok</button>
 </div>

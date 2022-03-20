@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store } from '@ngrx/store';
@@ -16,6 +17,8 @@ import { QuestionMarketLocalService } from '../../LocalService/question-market-l
 })
 export class QuestionMarketAddCategoryDialogComponent implements OnInit {
 
+  cat_name = new FormControl('', Validators.required)
+
   constructor(
     public dialogRef: MatDialogRef<QuestionMarketAddCategoryDialogComponent>,
     private _api: FetchApiMethodsService,
@@ -30,13 +33,13 @@ export class QuestionMarketAddCategoryDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  confirm(name: string): void {
+  confirm(): void {
 
     let _parent_ID = this._localService.addquestionproduct.area_ID;
-    if (_parent_ID) {
+    if (_parent_ID &&  this.cat_name.valid) {
 
       let _body : AddCategoryBody = {
-        category_name: name,
+        category_name: this.cat_name.value,
         area_ID: _parent_ID
       }
 
