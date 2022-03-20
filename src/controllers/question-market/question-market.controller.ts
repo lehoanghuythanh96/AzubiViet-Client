@@ -48,24 +48,19 @@ export class AddQuestionProductCategoryController {
     @UseGuards(JwtAuthGuard)
     @Post()
     async addquestionproductcategory(@Request() req: JwtAuthGuardReq, @Body() body: AddCategoryInput) {
-        if (req.user.user_role == 'admin') {
-            if (this.uploadschema.validate(body).error) {
-                throw new ForbiddenException({ message: this.uploadschema.validate(body).error?.message });
-            }
-
-            let _result = await this.QuestionProductCategoryRepository.save({
-                category_name: body.category_name,
-                area_ID: body.area_ID,
-                user_ID: req.user.user_id
-            })
-
-            await this.CacheManager.store.del(_cacheKey.all_questionproduct_category)
-
-            return _result;
-
-        } else {
-            return null;
+        if (this.uploadschema.validate(body).error) {
+            throw new ForbiddenException({ message: this.uploadschema.validate(body).error?.message });
         }
+
+        let _result = await this.QuestionProductCategoryRepository.save({
+            category_name: body.category_name,
+            area_ID: body.area_ID,
+            user_ID: req.user.user_id
+        })
+
+        await this.CacheManager.store.del(_cacheKey.all_questionproduct_category)
+
+        return _result;
     }
 }
 
@@ -1702,7 +1697,7 @@ export class UserDeleteSingleQuestionProductController {
         )
 
         if (!foundQuestion) {
-            throw new BadRequestException({ message: "[Question Market Controller] Question not found"})
+            throw new BadRequestException({ message: "[Question Market Controller] Question not found" })
         }
 
         await this.postRepository.update(
@@ -1723,7 +1718,7 @@ export class UserDeleteSingleQuestionProductController {
         let allMedias = await this._fetchdataService.getall_Medias();
 
         let foundMedias = [...allMedias.filter(
-            y => y.parent_ID == body.question_ID && [config.QUESTION_PRODUCT_AVATAR_CAT,config.QUESTION_PRODUCT_IMG_CAT].includes(y.media_category)
+            y => y.parent_ID == body.question_ID && [config.QUESTION_PRODUCT_AVATAR_CAT, config.QUESTION_PRODUCT_IMG_CAT].includes(y.media_category)
         )]
 
         if (foundAnswer) {
