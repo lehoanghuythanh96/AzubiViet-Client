@@ -1,0 +1,35 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports._cacheKey = void 0;
+exports._cacheKey = {
+    all_question_products: "Question_Products",
+    public_lessons: "Public_Lessons",
+    area_list: "Area_List",
+    lessoncategory_all: "LessonCategory_All",
+    all_users: "All_Users",
+    all_questionproduct_category: "All_QuestionProduct_Category",
+    all_lessonavatar: "All_Postavatar",
+    all_questionproduct_avatar: "All_QuestionProduct_Avatar",
+    all_questionanswer: "All_QuestionAnswer",
+    all_questionanswer_IMG: "All_QuestionAnswer_IMG",
+    all_userAnswerinMarket: "All_UserAnswer_inMarket",
+    all_questionIMG: "All_Question_IMG",
+    all_useravatars: "All_UserAvatars",
+    all_trash_medias: "All_Trash_Medias",
+    all_useranswerIMG: "All_UserAnswer_IMG",
+    all_usernotifications: "All_Usernotifications",
+    all_userAnswerReview: "All_UserAnswer_Review",
+    all_levelPoints: "All_LevelPoints",
+    all_ReportLogger: "All_ReportLogger",
+    all_userPrivateMessage: "All_UserPrivateMessage",
+    all_postComments: "All_PostComments",
+    all_guestQandAItems: "All_guestQandAItems",
+    all_postLikes: "All_PostLikes",
+    all_blackListItems: "All_BlackListItems",
+    all_serverChatItems: "All_ServerChatItems",
+    all_ShopItems: "all_ShopItems",
+    all_userInventories: "All_UserInventories",
+    all_QA_images: "All_QA_images",
+    all_medias: "All_Medias",
+};
+//# sourceMappingURL=cacheKeys.entity.js.map
