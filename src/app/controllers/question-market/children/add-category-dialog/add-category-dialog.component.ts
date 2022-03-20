@@ -51,7 +51,8 @@ export class QuestionMarketAddCategoryDialogComponent implements OnInit {
       this._api.postAPI(_payload).then(
         response => {
           this.store.dispatch(QuestionmarketInfoAction())
-          this._snackbar.open("Category added successfully","Close")
+          this._snackbar.open("Category added successfully", "Close")
+          console.log(response)
           this.dialogRef.close();
         }
       ).catch(
