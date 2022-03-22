@@ -15,44 +15,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserEntityResolver = void 0;
 const common_1 = require("@nestjs/common");
 const graphql_1 = require("@nestjs/graphql");
-const typeorm_1 = require("@nestjs/typeorm");
 const fetch_data_service_1 = require("../../controllers/fetch-data/fetch-data.service");
 const question_market_service_1 = require("../../controllers/question-market/question-market.service");
-const user_authentication_service_1 = require("../../controllers/user-authentication/user-authentication.service");
 const jwt_auth_guard_1 = require("../../tools/auth-tools/jwt-auth.guard");
 const user_decorator_1 = require("../../tools/auth-tools/user.decorator");
-const typeorm_2 = require("typeorm");
 const nestconfig_interface_1 = require("../config/nestconfig.interface");
 const defaultconfig_entity_1 = require("../defaultconfig/defaultconfig.entity");
-const leveltable_entity_1 = require("../leveltable/leveltable.entity");
 const media_entity_1 = require("../media/media.entity");
 const questionmarket_useranswer_entity_1 = require("../QuestionMarket_UserAnswer/questionmarket_useranswer.entity");
-const reportlogger_entity_1 = require("../reportLogger/reportlogger.entity");
-const useranswer_review_entity_1 = require("../useranswer_review/useranswer_review.entity");
 const userinventory_entity_1 = require("../userinventory/userinventory.entity");
-const usernotifications_entity_1 = require("../usernotifications/usernotifications.entity");
 const userauth_entity_1 = require("./userauth.entity");
 let config = nestconfig_interface_1.SystemDefaultConfig;
 let UserEntityResolver = class UserEntityResolver {
-    constructor(_userSevice, questionmarketService, leveltableRepository, userAnswerRepository, cacheManager, userNotificationRepository, reportLoggerRepository, userAnswerReviewRepository, fetchDataService) {
-        this._userSevice = _userSevice;
+    constructor(questionmarketService, fetchDataService) {
         this.questionmarketService = questionmarketService;
-        this.leveltableRepository = leveltableRepository;
-        this.userAnswerRepository = userAnswerRepository;
-        this.cacheManager = cacheManager;
-        this.userNotificationRepository = userNotificationRepository;
-        this.reportLoggerRepository = reportLoggerRepository;
-        this.userAnswerReviewRepository = userAnswerReviewRepository;
         this.fetchDataService = fetchDataService;
     }
     async user_info(user) {
         await this.fetchDataService.deleteall_unused_cdnfiles(user);
-        let _allusers = await this._userSevice.getallusers();
+        let _allusers = await this.fetchDataService.getallusers();
         let _result = _allusers.find(y => y.ID == user.user_id);
         return _result;
     }
     async user_avatar(user, UserEntity) {
-        let _cache = await this._userSevice.getalluseravatar();
+        let _cache = await this.fetchDataService.getalluseravatar();
         let _data = _cache.find(y => y.parent_ID == UserEntity.ID && y.user_ID == UserEntity.ID);
         let _null_val = {
             ID: 0,
@@ -78,7 +64,7 @@ let UserEntityResolver = class UserEntityResolver {
         return _result;
     }
     async user_level(user, UserEntity) {
-        let allUserLevels = await this._userSevice.getAllLevelPoints();
+        let allUserLevels = await this.fetchDataService.getAllLevelPoints();
         let filteredLevels = [...allUserLevels.filter(y => y.experience >= UserEntity.user_experience)];
         filteredLevels = filteredLevels.sort((a, b) => { return a.level - b.level; });
         return filteredLevels[0].level;
@@ -94,13 +80,13 @@ let UserEntityResolver = class UserEntityResolver {
         return _config;
     }
     async levelup_points(user, UserEntity) {
-        let allUserLevels = await this._userSevice.getAllLevelPoints();
+        let allUserLevels = await this.fetchDataService.getAllLevelPoints();
         let filteredLevels = [...allUserLevels.filter(y => y.experience >= UserEntity.user_experience)];
         filteredLevels = filteredLevels.sort((a, b) => { return a.level - b.level; });
         return filteredLevels[0].experience;
     }
     async user_inventory(user, UserEntity) {
-        let allItems = await this._userSevice.getAll_UserInventories();
+        let allItems = await this.fetchDataService.getAll_UserInventories();
         let filteredItems = [...allItems.filter(y => y.user_ID == UserEntity.ID)];
         return filteredItems;
     }
@@ -167,18 +153,7 @@ __decorate([
 ], UserEntityResolver.prototype, "user_inventory", null);
 UserEntityResolver = __decorate([
     (0, graphql_1.Resolver)(() => userauth_entity_1.UserEntity),
-    __param(2, (0, typeorm_1.InjectRepository)(leveltable_entity_1.LevelTableEntity)),
-    __param(3, (0, typeorm_1.InjectRepository)(questionmarket_useranswer_entity_1.QuestionMarket_UserAnswerEntity)),
-    __param(4, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
-    __param(5, (0, typeorm_1.InjectRepository)(usernotifications_entity_1.UserNotificationEntity)),
-    __param(6, (0, typeorm_1.InjectRepository)(reportlogger_entity_1.ReportLoggerEntity)),
-    __param(7, (0, typeorm_1.InjectRepository)(useranswer_review_entity_1.UserAnswerReviewEntity)),
-    __metadata("design:paramtypes", [user_authentication_service_1.UserAuthenticationService,
-        question_market_service_1.QuestionMarketService,
-        typeorm_2.Repository,
-        typeorm_2.Repository, Object, typeorm_2.Repository,
-        typeorm_2.Repository,
-        typeorm_2.Repository,
+    __metadata("design:paramtypes", [question_market_service_1.QuestionMarketService,
         fetch_data_service_1.FetchDataService])
 ], UserEntityResolver);
 exports.UserEntityResolver = UserEntityResolver;

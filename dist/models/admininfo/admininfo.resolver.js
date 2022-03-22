@@ -17,7 +17,6 @@ const common_1 = require("@nestjs/common");
 const graphql_1 = require("@nestjs/graphql");
 const fetch_data_service_1 = require("../../controllers/fetch-data/fetch-data.service");
 const lesson_handler_service_1 = require("../../controllers/lesson-handler/lesson-handler.service");
-const user_authentication_service_1 = require("../../controllers/user-authentication/user-authentication.service");
 const jwt_auth_guard_1 = require("../../tools/auth-tools/jwt-auth.guard");
 const user_decorator_1 = require("../../tools/auth-tools/user.decorator");
 const arealist_entity_1 = require("../arealist/arealist.entity");
@@ -29,14 +28,13 @@ const reportlogger_entity_1 = require("../reportLogger/reportlogger.entity");
 const admininfo_entity_1 = require("./admininfo.entity");
 let config = nestconfig_interface_1.SystemDefaultConfig;
 let AdminInfoResolver = class AdminInfoResolver {
-    constructor(_fetchdataService, _lessonhandlerService, _userauthService) {
-        this._fetchdataService = _fetchdataService;
+    constructor(fetchDataService, _lessonhandlerService) {
+        this.fetchDataService = fetchDataService;
         this._lessonhandlerService = _lessonhandlerService;
-        this._userauthService = _userauthService;
     }
     async admininfo(user) {
-        await this._fetchdataService.deleteall_unused_cdnfiles(user);
-        let _allusers = await this._userauthService.getallusers();
+        await this.fetchDataService.deleteall_unused_cdnfiles(user);
+        let _allusers = await this.fetchDataService.getallusers();
         let _data = _allusers.filter(y => y.user_email == user.user_email)[0];
         if (_data) {
             return _data;
@@ -51,13 +49,13 @@ let AdminInfoResolver = class AdminInfoResolver {
         return await this._lessonhandlerService.getallpubliclesson();
     }
     async arealist() {
-        return await this._fetchdataService.getallarea();
+        return await this.fetchDataService.getallarea();
     }
     async lessoncatlist() {
         return await this._lessonhandlerService.getall_lessoncategory();
     }
     async report_loggers() {
-        return await this._userauthService.getallReportLogger();
+        return await this.fetchDataService.getallReportLogger();
     }
     defaultconfig() {
         let _config = {
@@ -116,8 +114,7 @@ __decorate([
 AdminInfoResolver = __decorate([
     (0, graphql_1.Resolver)(() => admininfo_entity_1.AdminInfoEntity),
     __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService,
-        lesson_handler_service_1.LessonHandlerService,
-        user_authentication_service_1.UserAuthenticationService])
+        lesson_handler_service_1.LessonHandlerService])
 ], AdminInfoResolver);
 exports.AdminInfoResolver = AdminInfoResolver;
 //# sourceMappingURL=admininfo.resolver.js.map

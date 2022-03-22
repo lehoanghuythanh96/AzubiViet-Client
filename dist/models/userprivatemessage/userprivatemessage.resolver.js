@@ -15,22 +15,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserPrivateMessageResolver = void 0;
 const common_1 = require("@nestjs/common");
 const graphql_1 = require("@nestjs/graphql");
-const typeorm_1 = require("@nestjs/typeorm");
-const user_authentication_service_1 = require("../../controllers/user-authentication/user-authentication.service");
+const fetch_data_service_1 = require("../../controllers/fetch-data/fetch-data.service");
 const jwt_auth_guard_1 = require("../../tools/auth-tools/jwt-auth.guard");
 const user_decorator_1 = require("../../tools/auth-tools/user.decorator");
-const typeorm_2 = require("typeorm");
 const nestconfig_interface_1 = require("../config/nestconfig.interface");
 const userprivatemessage_entity_1 = require("./userprivatemessage.entity");
 let config = nestconfig_interface_1.SystemDefaultConfig;
 let UserPrivateMessageResolver = class UserPrivateMessageResolver {
-    constructor(_userauthService, _userprivatemessageRepository) {
-        this._userauthService = _userauthService;
-        this._userprivatemessageRepository = _userprivatemessageRepository;
+    constructor(fetchDataService) {
+        this.fetchDataService = fetchDataService;
     }
     async user_private_messages(user) {
-        let _allmsgs = await this._userauthService.getAllUserPrivateMessages();
-        let _usermsgs = _allmsgs.filter(y => y.user_ID == user.user_id);
+        let _allmsgs = await this.fetchDataService.getAllUserPrivateMessages();
+        let _usermsgs = _allmsgs.filter((y) => y.user_ID == user.user_id);
         return _usermsgs;
     }
 };
@@ -44,9 +41,7 @@ __decorate([
 ], UserPrivateMessageResolver.prototype, "user_private_messages", null);
 UserPrivateMessageResolver = __decorate([
     (0, graphql_1.Resolver)(() => [userprivatemessage_entity_1.UserPrivateMessageEntity]),
-    __param(1, (0, typeorm_1.InjectRepository)(userprivatemessage_entity_1.UserPrivateMessageEntity)),
-    __metadata("design:paramtypes", [user_authentication_service_1.UserAuthenticationService,
-        typeorm_2.Repository])
+    __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService])
 ], UserPrivateMessageResolver);
 exports.UserPrivateMessageResolver = UserPrivateMessageResolver;
 //# sourceMappingURL=userprivatemessage.resolver.js.map

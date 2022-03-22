@@ -10,45 +10,31 @@ import { AppCache } from 'src/models/cacheKeys/cacheKeys.entity';
 import { JwtAuthGuardReq } from 'src/tools/auth-tools/jwt-auth.guard';
 import { Repository } from 'typeorm';
 import { QuestionMarketService } from '../question-market/question-market.service';
-import { UserAnswerReviewEntity } from 'src/models/useranswer_review/useranswer_review.entity';
-import { UserNotificationEntity } from 'src/models/usernotifications/usernotifications.entity';
-import { ReportLoggerEntity } from 'src/models/reportLogger/reportlogger.entity';
-import { QuestionMarket_UserAnswerEntity } from 'src/models/QuestionMarket_UserAnswer/questionmarket_useranswer.entity';
-import { PostEntity } from 'src/models/post/post.entity';
-import { BlackListEntity } from 'src/models/blacklist/blacklist.entity';
-import { UserPrivateMessageEntity } from 'src/models/userprivatemessage/userprivatemessage.entity';
 import { FetchDataService } from '../fetch-data/fetch-data.service';
 import { UserInventoryEntity } from 'src/models/userinventory/userinventory.entity';
-import { MediaListEntity } from 'src/models/media/media.entity';
 import { FileUploadbyFormQuery } from 'src/models/req_upload/requpload.interface';
 import Joi = require('joi');
 export declare class UserAuthenticationController {
 }
 export declare class userGGloginController {
-    private basictools;
-    private _userauth;
+    private fetchDataService;
     private jwt;
-    private cacheManager;
-    private userRepository;
-    constructor(basictools: BasicToolsService, _userauth: UserAuthenticationService, jwt: JwtService, cacheManager: AppCache, userRepository: Repository<UserEntity>);
-    userAuthGoogle(GGauthBody: GGLoginauthBody): Promise<userJWTpayload | BadRequestException>;
+    constructor(fetchDataService: FetchDataService, jwt: JwtService);
+    userAuthGoogle(GGauthBody: GGLoginauthBody): Promise<BadRequestException | userJWTpayload>;
 }
 export declare class NewUserRegisterController {
-    private basictools;
     private jwt;
-    private authService;
-    private cacheManager;
-    constructor(basictools: BasicToolsService, jwt: JwtService, authService: UserAuthenticationService, cacheManager: AppCache);
+    private fetchDataService;
+    constructor(jwt: JwtService, fetchDataService: FetchDataService);
     newuserregister(body: {
         user_email: string;
         user_password: string;
     }): Promise<import("nodemailer/lib/smtp-transport").SentMessageInfo>;
 }
 export declare class UserLoginController {
-    private basictools;
     private jwt;
-    private authService;
-    constructor(basictools: BasicToolsService, jwt: JwtService, authService: UserAuthenticationService);
+    private fetchDataService;
+    constructor(jwt: JwtService, fetchDataService: FetchDataService);
     userlogin(body: {
         user_email: string;
         user_password: string;
@@ -56,22 +42,16 @@ export declare class UserLoginController {
 }
 export declare class ConfirmUserController {
     private jwt;
-    private _authService;
-    private cacheManager;
-    private userRepository;
-    constructor(jwt: JwtService, _authService: UserAuthenticationService, cacheManager: AppCache, userRepository: Repository<UserEntity>);
+    private fetchDataService;
+    constructor(jwt: JwtService, fetchDataService: FetchDataService);
     confirmuser(query: {
         secretkey: string;
     }): Promise<string>;
 }
 export declare class ReportUserAnswerReviewInvalidControllerInvalidController {
     private questionmarketService;
-    private _userSevice;
-    private cacheManager;
-    private userAnswerReviewRepository;
-    private userNotificationRepository;
-    private reportLoggerRepository;
-    constructor(questionmarketService: QuestionMarketService, _userSevice: UserAuthenticationService, cacheManager: AppCache, userAnswerReviewRepository: Repository<UserAnswerReviewEntity>, userNotificationRepository: Repository<UserNotificationEntity>, reportLoggerRepository: Repository<ReportLoggerEntity>);
+    private fetchDataService;
+    constructor(questionmarketService: QuestionMarketService, fetchDataService: FetchDataService);
     report_user_answer_review_invalid(req: JwtAuthGuardReq, body: {
         notification_ID: number;
         user_answer_review_ID: number;
@@ -82,10 +62,8 @@ export declare class ReportUserAnswerReviewInvalidControllerInvalidController {
 }
 export declare class ConfirmReportInvalidAnswerReviewController {
     private questionmarketService;
-    private _userSevice;
-    private userNotificationRepository;
-    private cacheManager;
-    constructor(questionmarketService: QuestionMarketService, _userSevice: UserAuthenticationService, userNotificationRepository: Repository<UserNotificationEntity>, cacheManager: AppCache);
+    private fetchDataService;
+    constructor(questionmarketService: QuestionMarketService, fetchDataService: FetchDataService);
     confirm_report_invalid_answer_review(req: JwtAuthGuardReq, body: {
         notification_ID: number;
         user_answer_review_ID: number;
@@ -98,12 +76,8 @@ export declare class ConfirmReportInvalidAnswerReviewController {
 }
 export declare class ReportUserAnswerReviewInvalidController {
     private questionmarketService;
-    private _userSevice;
-    private cacheManager;
-    private userAnswerRepository;
-    private userNotificationRepository;
-    private reportLoggerRepository;
-    constructor(questionmarketService: QuestionMarketService, _userSevice: UserAuthenticationService, cacheManager: AppCache, userAnswerRepository: Repository<QuestionMarket_UserAnswerEntity>, userNotificationRepository: Repository<UserNotificationEntity>, reportLoggerRepository: Repository<ReportLoggerEntity>);
+    private fetchDataService;
+    constructor(questionmarketService: QuestionMarketService, fetchDataService: FetchDataService);
     report_user_answer_invalid(req: JwtAuthGuardReq, body: {
         notification_ID: number;
         user_answer_ID: number;
@@ -114,10 +88,8 @@ export declare class ReportUserAnswerReviewInvalidController {
 }
 export declare class ConfirmReportInvalidAnswerController {
     private questionmarketService;
-    private _userSevice;
-    private userNotificationRepository;
-    private cacheManager;
-    constructor(questionmarketService: QuestionMarketService, _userSevice: UserAuthenticationService, userNotificationRepository: Repository<UserNotificationEntity>, cacheManager: AppCache);
+    private fetchDataService;
+    constructor(questionmarketService: QuestionMarketService, fetchDataService: FetchDataService);
     confirm_report_invalid_answer(req: JwtAuthGuardReq, body: {
         notification_ID: number;
         user_answer_ID: number;
@@ -130,12 +102,8 @@ export declare class ConfirmReportInvalidAnswerController {
 }
 export declare class ReportInvalidQuestionController {
     private questionmarketService;
-    private _userSevice;
-    private cacheManager;
-    private userNotificationRepository;
-    private reportLoggerRepository;
-    private postRepository;
-    constructor(questionmarketService: QuestionMarketService, _userSevice: UserAuthenticationService, cacheManager: AppCache, userNotificationRepository: Repository<UserNotificationEntity>, reportLoggerRepository: Repository<ReportLoggerEntity>, postRepository: Repository<PostEntity>);
+    private fetchDataService;
+    constructor(questionmarketService: QuestionMarketService, fetchDataService: FetchDataService);
     report_invalid_question(req: JwtAuthGuardReq, body: {
         question_ID: number;
         report_notes: string;
@@ -145,10 +113,8 @@ export declare class ReportInvalidQuestionController {
 }
 export declare class ConfirmReportInvalidQuestionController {
     private questionmarketService;
-    private _userSevice;
-    private userNotificationRepository;
-    private cacheManager;
-    constructor(questionmarketService: QuestionMarketService, _userSevice: UserAuthenticationService, userNotificationRepository: Repository<UserNotificationEntity>, cacheManager: AppCache);
+    private fetchDataService;
+    constructor(questionmarketService: QuestionMarketService, fetchDataService: FetchDataService);
     confirm_report_invalid_question(req: JwtAuthGuardReq, body: {
         notification_ID: number;
         question_ID: number;
@@ -160,22 +126,15 @@ export declare class ConfirmReportInvalidQuestionController {
     }>;
 }
 export declare class UserBlockEmailFromPrivateMessageController {
-    private _userSevice;
-    private cacheManager;
-    private blackListRepository;
-    private userPrivateMessageRepository;
-    constructor(_userSevice: UserAuthenticationService, cacheManager: AppCache, blackListRepository: Repository<BlackListEntity>, userPrivateMessageRepository: Repository<UserPrivateMessageEntity>);
+    private fetchDataService;
+    constructor(fetchDataService: FetchDataService);
     userblockemailfromprivatemessage(req: JwtAuthGuardReq, body: {
         msg_ID: number;
     }): Promise<void>;
 }
 export declare class UserBuyASHOPitemController {
-    private _userSevice;
     private fetchDataService;
-    private cacheManager;
-    private userRepository;
-    private userInventoryRepository;
-    constructor(_userSevice: UserAuthenticationService, fetchDataService: FetchDataService, cacheManager: AppCache, userRepository: Repository<UserEntity>, userInventoryRepository: Repository<UserInventoryEntity>);
+    constructor(fetchDataService: FetchDataService);
     userbuyashopitem(req: JwtAuthGuardReq, body: {
         item_code: string;
         quantity: number;
@@ -183,34 +142,28 @@ export declare class UserBuyASHOPitemController {
 }
 export declare class UserChangePasswordController {
     private jwt;
-    private basicToolsService;
-    constructor(jwt: JwtService, basicToolsService: BasicToolsService);
+    private fetchDataService;
+    constructor(jwt: JwtService, fetchDataService: FetchDataService);
     userchangepassword(req: JwtAuthGuardReq, body: {
         user_password: string;
     }): Promise<void>;
 }
 export declare class ConfirmResetPasswordController {
     private jwt;
-    private basicToolsService;
-    private userRepository;
-    private cacheManager;
-    constructor(jwt: JwtService, basicToolsService: BasicToolsService, userRepository: Repository<UserEntity>, cacheManager: AppCache);
+    private fetchDataService;
+    constructor(jwt: JwtService, fetchDataService: FetchDataService);
     resetpassword(query: {
         secretkey: string;
     }): Promise<any>;
 }
 export declare class UploadQuestionProductAvatarByImgFileController {
-    private basictools;
-    private readonly mediarepository;
-    private readonly cacheManager;
-    constructor(basictools: BasicToolsService, mediarepository: Repository<MediaListEntity>, cacheManager: AppCache);
+    private fetchDataService;
+    constructor(fetchDataService: FetchDataService);
     uploaduseravatarbyimgfile(req: any, query: FileUploadbyFormQuery): Observable<any>;
 }
 export declare class UploadUserAvatarByUrlController {
-    private readonly basictools;
-    private readonly mediarepository;
-    private readonly cacheManager;
-    constructor(basictools: BasicToolsService, mediarepository: Repository<MediaListEntity>, cacheManager: AppCache);
+    private fetchDataService;
+    constructor(fetchDataService: FetchDataService);
     uploaduseravatarbyurl(req: any, body: {
         img_url: string;
     }): Observable<any>;

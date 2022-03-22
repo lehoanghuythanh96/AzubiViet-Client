@@ -21,17 +21,16 @@ let config = SystemDefaultConfig;
 export class AdminInfoResolver {
 
     constructor(
-        private _fetchdataService: FetchDataService,
-        private _lessonhandlerService: LessonHandlerService,
-        private _userauthService: UserAuthenticationService
+        private fetchDataService: FetchDataService,
+        private _lessonhandlerService: LessonHandlerService
     ) { }
 
     @Query(() => AdminInfoEntity)
     @UseGuards(GqlJwtAuthGuard)
     async admininfo(@JwtCurrentUser() user: userJWTpayload) {
-        await this._fetchdataService.deleteall_unused_cdnfiles(user);
+        await this.fetchDataService.deleteall_unused_cdnfiles(user);
 
-        let _allusers = await this._userauthService.getallusers();
+        let _allusers = await this.fetchDataService.getallusers();
         let _data = _allusers.filter(y => y.user_email == user.user_email)[0]
         if (_data) {
             return _data
@@ -53,7 +52,7 @@ export class AdminInfoResolver {
     @ResolveField(() => [AreaListEntity])
     @UseGuards(GqlJwtAuthGuard)
     async arealist() {
-        return await this._fetchdataService.getallarea();
+        return await this.fetchDataService.getallarea();
     }
 
     @ResolveField(() => [LessonCategoryEntity])
@@ -65,7 +64,7 @@ export class AdminInfoResolver {
     @ResolveField(() => [ReportLoggerEntity])
     @UseGuards(GqlJwtAuthGuard)
     async report_loggers() {
-        return await this._userauthService.getallReportLogger();
+        return await this.fetchDataService.getallReportLogger();
     }
 
     @ResolveField(() => DefaultConfigEntity)

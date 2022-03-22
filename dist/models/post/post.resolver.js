@@ -18,7 +18,6 @@ const graphql_1 = require("@nestjs/graphql");
 const fetch_data_service_1 = require("../../controllers/fetch-data/fetch-data.service");
 const lesson_handler_service_1 = require("../../controllers/lesson-handler/lesson-handler.service");
 const question_market_service_1 = require("../../controllers/question-market/question-market.service");
-const user_authentication_service_1 = require("../../controllers/user-authentication/user-authentication.service");
 const jwt_auth_guard_1 = require("../../tools/auth-tools/jwt-auth.guard");
 const user_decorator_1 = require("../../tools/auth-tools/user.decorator");
 const nestconfig_interface_1 = require("../config/nestconfig.interface");
@@ -29,11 +28,10 @@ const questionmarket_useranswer_entity_1 = require("../QuestionMarket_UserAnswer
 const userauth_entity_1 = require("../userauthentication/userauth.entity");
 let config = nestconfig_interface_1.SystemDefaultConfig;
 let PostEntityResolver = class PostEntityResolver {
-    constructor(_fetchdataService, _questionmarketService, _lessonhandlerservice, _userauthService) {
-        this._fetchdataService = _fetchdataService;
+    constructor(fetchDataService, _questionmarketService, _lessonhandlerservice) {
+        this.fetchDataService = fetchDataService;
         this._questionmarketService = _questionmarketService;
         this._lessonhandlerservice = _lessonhandlerservice;
-        this._userauthService = _userauthService;
     }
     async lesson_avatar(PostEntity) {
         let _cache = await this._lessonhandlerservice.getalllessonavatar();
@@ -100,7 +98,7 @@ let PostEntityResolver = class PostEntityResolver {
         }
     }
     async author_info(PostEntity) {
-        let _cache = await this._userauthService.getallusers();
+        let _cache = await this.fetchDataService.getallusers();
         let _curruser = Object.assign({}, _cache.find(y => y.ID == PostEntity.post_author));
         let _tempuser = {
             ID: 0,
@@ -178,8 +176,7 @@ PostEntityResolver = __decorate([
     (0, graphql_1.Resolver)(() => post_entity_1.PostEntity),
     __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService,
         question_market_service_1.QuestionMarketService,
-        lesson_handler_service_1.LessonHandlerService,
-        user_authentication_service_1.UserAuthenticationService])
+        lesson_handler_service_1.LessonHandlerService])
 ], PostEntityResolver);
 exports.PostEntityResolver = PostEntityResolver;
 //# sourceMappingURL=post.resolver.js.map

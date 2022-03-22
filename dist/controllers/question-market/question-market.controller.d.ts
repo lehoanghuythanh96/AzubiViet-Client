@@ -4,17 +4,8 @@ import { Observable } from 'rxjs';
 import { AppCache } from 'src/models/cacheKeys/cacheKeys.entity';
 import { AddCategoryInput } from 'src/models/lessoncategory/lessoncategory.entity';
 import { MediaListEntity } from 'src/models/media/media.entity';
-import { PostEntity } from 'src/models/post/post.entity';
 import { AddNewQuestionProducPostBody, EditQuestionProducPostBody, PostInput } from 'src/models/post/post.interface';
-import { QuestionMarketAnswerEntity } from 'src/models/questionmarketanswer/questionmarketanswer.entity';
-import { QuestionMarket_UserAnswerEntity } from 'src/models/QuestionMarket_UserAnswer/questionmarket_useranswer.entity';
-import { QuestionProductCategoryEntity } from 'src/models/questionproductcategory/questionproductcategory.entity';
-import { ReportLoggerEntity } from 'src/models/reportLogger/reportlogger.entity';
 import { FileUploadbyFormQuery } from 'src/models/req_upload/requpload.interface';
-import { UserAnswerReviewEntity } from 'src/models/useranswer_review/useranswer_review.entity';
-import { UserEntity } from 'src/models/userauthentication/userauth.entity';
-import { UserNotificationEntity } from 'src/models/usernotifications/usernotifications.entity';
-import { UserPrivateMessageEntity } from 'src/models/userprivatemessage/userprivatemessage.entity';
 import { JwtAuthGuardReq } from 'src/tools/auth-tools/jwt-auth.guard';
 import { BasicToolsService } from 'src/tools/basic-tools/basic-tools.service';
 import { Repository } from 'typeorm';
@@ -24,94 +15,73 @@ import { QuestionMarketService } from './question-market.service';
 export declare class QuestionMarketController {
 }
 export declare class AddQuestionProductCategoryController {
-    private readonly QuestionProductCategoryRepository;
-    private readonly CacheManager;
-    constructor(QuestionProductCategoryRepository: Repository<QuestionProductCategoryEntity>, CacheManager: AppCache);
+    private fetchDataService;
+    constructor(fetchDataService: FetchDataService);
     uploadschema: Joi.ObjectSchema<any>;
     addquestionproductcategory(req: JwtAuthGuardReq, body: AddCategoryInput): Promise<{
         category_name: string;
         area_ID: number;
         user_ID: number;
-    } & QuestionProductCategoryEntity>;
+    } & import("../../models/questionproductcategory/questionproductcategory.entity").QuestionProductCategoryEntity>;
 }
 export declare class UploadQuestionProductImageByFileController {
-    private basictools;
-    private readonly mediarepository;
     private readonly localService;
-    private readonly cacheManager;
-    constructor(basictools: BasicToolsService, mediarepository: Repository<MediaListEntity>, localService: QuestionMarketService, cacheManager: AppCache);
+    private fetchDataService;
+    constructor(localService: QuestionMarketService, fetchDataService: FetchDataService);
     uploadquestionproductimgbyimgfile(req: any, query: FileUploadbyFormQuery): Observable<any>;
 }
 export declare class UploadQuestionProductImageByUrlController {
-    private readonly basictools;
-    private readonly mediarepository;
     private readonly localService;
-    private readonly cacheManager;
-    constructor(basictools: BasicToolsService, mediarepository: Repository<MediaListEntity>, localService: QuestionMarketService, cacheManager: AppCache);
+    private fetchDataService;
+    constructor(localService: QuestionMarketService, fetchDataService: FetchDataService);
     uploadquestionproductimgbyurl(req: any, body: {
         img_url: string;
     }): Observable<any>;
 }
 export declare class UploadQuestionProductAnswerImageByFileController {
-    private basictools;
-    private readonly mediarepository;
     private readonly localService;
-    private readonly cacheManager;
-    constructor(basictools: BasicToolsService, mediarepository: Repository<MediaListEntity>, localService: QuestionMarketService, cacheManager: AppCache);
+    private fetchDataService;
+    constructor(localService: QuestionMarketService, fetchDataService: FetchDataService);
     uploadquestionproductanswerimgbyimgfile(req: any, query: FileUploadbyFormQuery): Observable<any>;
 }
 export declare class UploadQuestionProductAnswerImageByUrlController {
-    private readonly basictools;
-    private readonly mediarepository;
     private readonly localService;
-    private readonly cacheManager;
-    constructor(basictools: BasicToolsService, mediarepository: Repository<MediaListEntity>, localService: QuestionMarketService, cacheManager: AppCache);
+    private fetchDataService;
+    constructor(localService: QuestionMarketService, fetchDataService: FetchDataService);
     uploadquestionproductanswerimgbyurl(req: any, body: {
         img_url: string;
     }): Observable<any>;
 }
 export declare class DeleteTempQuestionProductImageController {
-    private readonly basictools;
-    private readonly mediarepository;
-    private readonly cacheManager;
-    constructor(basictools: BasicToolsService, mediarepository: Repository<MediaListEntity>, cacheManager: AppCache);
+    private fetchDataService;
+    constructor(fetchDataService: FetchDataService);
     deletetemporaryquestionproductimg(req: JwtAuthGuardReq, body: {
         img_name: string;
     }): Promise<import("typeorm").DeleteResult>;
 }
 export declare class DeleteTempQuestionUserAnswerImageController {
-    private readonly basictools;
-    private readonly mediarepository;
-    private readonly cacheManager;
-    constructor(basictools: BasicToolsService, mediarepository: Repository<MediaListEntity>, cacheManager: AppCache);
+    private fetchDataService;
+    constructor(fetchDataService: FetchDataService);
     deletetemporaryquestionuseranswerimg(req: JwtAuthGuardReq, body: {
         img_name: string;
     }): Promise<import("typeorm").DeleteResult>;
 }
 export declare class CreateNewQuestionProductController {
-    private readonly questionmarketanswerRepository;
-    private readonly postrepository;
-    private readonly mediarepository;
-    private readonly cacheManager;
-    constructor(questionmarketanswerRepository: Repository<QuestionMarketAnswerEntity>, postrepository: Repository<PostEntity>, mediarepository: Repository<MediaListEntity>, cacheManager: AppCache);
+    private fetchDataService;
+    constructor(fetchDataService: FetchDataService);
     uploadschema: Joi.ObjectSchema<any>;
-    createnewquestionproduct(req: JwtAuthGuardReq, body: AddNewQuestionProducPostBody): Promise<PostInput & PostEntity>;
+    createnewquestionproduct(req: JwtAuthGuardReq, body: AddNewQuestionProducPostBody): Promise<PostInput & import("src/models/post/post.entity").PostEntity>;
 }
 export declare class EditPrivateQuestionProductController {
-    private readonly postrepository;
-    private readonly mediarepository;
-    private readonly questionmarketanswerRepository;
-    private readonly useranswerreviewrepository;
-    private readonly cacheManager;
-    constructor(postrepository: Repository<PostEntity>, mediarepository: Repository<MediaListEntity>, questionmarketanswerRepository: Repository<QuestionMarketAnswerEntity>, useranswerreviewrepository: Repository<UserAnswerReviewEntity>, cacheManager: AppCache);
+    private fetchDataService;
+    constructor(fetchDataService: FetchDataService);
     uploadschema: Joi.ObjectSchema<any>;
     editprivatequestionproduct(req: JwtAuthGuardReq, body: EditQuestionProducPostBody): Promise<import("typeorm").UpdateResult>;
 }
 export declare class UserRequiredReviewUpdateController {
     private _questionmarketService;
-    private _userAnswerReviewRepository;
-    private readonly cacheManager;
-    constructor(_questionmarketService: QuestionMarketService, _userAnswerReviewRepository: Repository<UserAnswerReviewEntity>, cacheManager: AppCache);
+    private fetchDataService;
+    constructor(_questionmarketService: QuestionMarketService, fetchDataService: FetchDataService);
     userrequiredreviewupdate(req: JwtAuthGuardReq, body: {
         question_ID: number;
     }): Promise<import("typeorm").UpdateResult>;
@@ -131,11 +101,9 @@ export declare class UserRequireSkipReviewUpdate {
     }): Promise<import("typeorm").UpdateResult>;
 }
 export declare class UploadQuestionProductAvatarByImgFileController {
-    private basictools;
-    private readonly mediarepository;
     private readonly localService;
-    private readonly cacheManager;
-    constructor(basictools: BasicToolsService, mediarepository: Repository<MediaListEntity>, localService: QuestionMarketService, cacheManager: AppCache);
+    private fetchDataService;
+    constructor(localService: QuestionMarketService, fetchDataService: FetchDataService);
     uploadquestionproductavatarbyimgfile(req: any, query: FileUploadbyFormQuery): Observable<any>;
 }
 export declare class UploadQuestionProductAvatarByUrlController {
@@ -157,11 +125,9 @@ export declare class UploadQuestionMarketUserAnswerImageByFileController {
     uploadquestionmarketuseranswerimgbyimgfile(req: any, query: FileUploadbyFormQuery): Observable<any>;
 }
 export declare class UploadQuestionMarketUserAnswerImageByUrlController {
-    private readonly basictools;
-    private readonly mediarepository;
+    private fetchDataService;
     private readonly localService;
-    private readonly cacheManager;
-    constructor(basictools: BasicToolsService, mediarepository: Repository<MediaListEntity>, localService: QuestionMarketService, cacheManager: AppCache);
+    constructor(fetchDataService: FetchDataService, localService: QuestionMarketService);
     uploadquestionmarketuseranswerimgbyurl(req: any, body: {
         img_url: string;
     }): Observable<any>;
@@ -180,11 +146,8 @@ export declare class GetReviewQuestionAnswerController {
     private questionMarketService;
     private userService;
     private jwt;
-    private notificationRepository;
-    private userAnswerRepository;
-    private userPrivateMessageRepository;
-    private readonly cacheManager;
-    constructor(questionMarketService: QuestionMarketService, userService: UserAuthenticationService, jwt: JwtService, notificationRepository: Repository<UserNotificationEntity>, userAnswerRepository: Repository<QuestionMarket_UserAnswerEntity>, userPrivateMessageRepository: Repository<UserPrivateMessageEntity>, cacheManager: AppCache);
+    private fetchDataService;
+    constructor(questionMarketService: QuestionMarketService, userService: UserAuthenticationService, jwt: JwtService, fetchDataService: FetchDataService);
     getreviewquestionanswer(body: {
         token: string;
     }): Promise<(number | {
@@ -198,12 +161,8 @@ export declare class GetReviewQuestionAnswerController {
 export declare class UserSubmitAnswerReviewController {
     private _questionmarketService;
     private _userauthService;
-    private userNotificationRepository;
-    private readonly cacheManager;
-    private userRepository;
-    private userAnswerReviewRepository;
-    private questionMarketUserAnswerRepository;
-    constructor(_questionmarketService: QuestionMarketService, _userauthService: UserAuthenticationService, userNotificationRepository: Repository<UserNotificationEntity>, cacheManager: AppCache, userRepository: Repository<UserEntity>, userAnswerReviewRepository: Repository<UserAnswerReviewEntity>, questionMarketUserAnswerRepository: Repository<QuestionMarket_UserAnswerEntity>);
+    private fetchDataService;
+    constructor(_questionmarketService: QuestionMarketService, _userauthService: UserAuthenticationService, fetchDataService: FetchDataService);
     uploadschema: Joi.ObjectSchema<any>;
     usersubmitanswerreview(req: JwtAuthGuardReq, body: {
         correctness: boolean;
@@ -217,11 +176,8 @@ export declare class UserSubmitAnswerReviewController {
 export declare class UserConfirmReviewController {
     private _questionmarketService;
     private _userauthService;
-    private _userAnswerReviewRepository;
-    private readonly cacheManager;
-    private readonly userRepository;
-    private readonly userNotificationRepository;
-    constructor(_questionmarketService: QuestionMarketService, _userauthService: UserAuthenticationService, _userAnswerReviewRepository: Repository<UserAnswerReviewEntity>, cacheManager: AppCache, userRepository: Repository<UserEntity>, userNotificationRepository: Repository<UserNotificationEntity>);
+    private fetchDataService;
+    constructor(_questionmarketService: QuestionMarketService, _userauthService: UserAuthenticationService, fetchDataService: FetchDataService);
     userconfirmreview(body: {
         review_ID: number;
         isLiked: boolean;
@@ -230,23 +186,23 @@ export declare class UserConfirmReviewController {
 }
 export declare class useranswer_reportedReviewerRequireOriginalAnswerController {
     private _questionmarketService;
-    private _userauthService;
-    constructor(_questionmarketService: QuestionMarketService, _userauthService: UserAuthenticationService);
+    private fetchDataService;
+    constructor(_questionmarketService: QuestionMarketService, fetchDataService: FetchDataService);
     useranswer_reportedReviewerRequireOriginalAnswer(req: JwtAuthGuardReq, body: {
         user_answer_ID: number;
-    }): Promise<QuestionMarketAnswerEntity>;
+    }): Promise<import("src/models/questionmarketanswer/questionmarketanswer.entity").QuestionMarketAnswerEntity>;
 }
 export declare class ReportedQuestionAuthorRequiredDataController {
     private _questionmarketService;
     constructor(_questionmarketService: QuestionMarketService);
     reportedquestion_authorrequiredata(req: JwtAuthGuardReq, body: {
         question_ID: number;
-    }): Promise<PostEntity>;
+    }): Promise<import("src/models/post/post.entity").PostEntity>;
 }
 export declare class SendPrivateMessageToQuestionAuthorController {
     private _questionmarketService;
-    private userAuthService;
-    constructor(_questionmarketService: QuestionMarketService, userAuthService: UserAuthenticationService);
+    private fetchDataService;
+    constructor(_questionmarketService: QuestionMarketService, fetchDataService: FetchDataService);
     sendprivatemessagetoquestionauthor(req: JwtAuthGuardReq, body: {
         question_ID: number;
         message_content: string;
@@ -266,10 +222,8 @@ export declare class UserConfirmClearAnswerReportController {
 export declare class UserReportExpiredAnswerController {
     private _questionmarketService;
     private _userauthService;
-    private reportLoggerRepository;
-    private readonly cacheManager;
-    private readonly userRepository;
-    constructor(_questionmarketService: QuestionMarketService, _userauthService: UserAuthenticationService, reportLoggerRepository: Repository<ReportLoggerEntity>, cacheManager: AppCache, userRepository: Repository<UserEntity>);
+    private fetchDataService;
+    constructor(_questionmarketService: QuestionMarketService, _userauthService: UserAuthenticationService, fetchDataService: FetchDataService);
     userreportexpiredanswer(req: JwtAuthGuardReq, body: {
         user_answer_ID: number;
     }): Promise<{
@@ -279,11 +233,8 @@ export declare class UserReportExpiredAnswerController {
 export declare class UserDeleteSingleQuestionProductController {
     private _questionmarketService;
     private _userauthService;
-    private _fetchdataService;
-    private postRepository;
-    private readonly cacheManager;
-    private readonly mediaListRepository;
-    constructor(_questionmarketService: QuestionMarketService, _userauthService: UserAuthenticationService, _fetchdataService: FetchDataService, postRepository: Repository<PostEntity>, cacheManager: AppCache, mediaListRepository: Repository<MediaListEntity>);
+    private fetchDataService;
+    constructor(_questionmarketService: QuestionMarketService, _userauthService: UserAuthenticationService, fetchDataService: FetchDataService);
     userdeletesinglequestionproduct(req: JwtAuthGuardReq, body: {
         question_ID: number;
     }): Promise<void>;

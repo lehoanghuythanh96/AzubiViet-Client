@@ -12,27 +12,19 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DeleteTemp_QandA_ImageController = exports.Upload_QandA_ImageByUrlController = exports.Upload_QandA_ImageByFileController = exports.RemoveAllUserServerChatContentController = exports.UserSendServerchatMsgController = exports.ConfirmReportInvalidQA_AnswerController = exports.ReportInvalidQA_AnswerController = exports.ConfirmReportInvalidQA_QuestionController = exports.ReportInvalidQAController = exports.UserLockQAItemController = exports.UserDeleteQA_AnswerController = exports.UserThankyou_QAAnswerController = exports.UserLikeQA_AnswerController = exports.UserSubmitQandA_AnswerController = exports.UserSubmitQandAController = exports.AddSingleAreaController = exports.FetchDataController = void 0;
+exports.TestController = exports.DeleteTemp_QandA_ImageController = exports.Upload_QandA_ImageByUrlController = exports.Upload_QandA_ImageByFileController = exports.RemoveAllUserServerChatContentController = exports.UserSendServerchatMsgController = exports.ConfirmReportInvalidQA_AnswerController = exports.ReportInvalidQA_AnswerController = exports.ConfirmReportInvalidQA_QuestionController = exports.ReportInvalidQAController = exports.UserLockQAItemController = exports.UserDeleteQA_AnswerController = exports.UserThankyou_QAAnswerController = exports.UserLikeQA_AnswerController = exports.UserSubmitQandA_AnswerController = exports.UserSubmitQandAController = exports.AddSingleAreaController = exports.FetchDataController = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
 const rxjs_1 = require("rxjs");
-const arealist_entity_1 = require("../../models/arealist/arealist.entity");
 const jwt_auth_guard_1 = require("../../tools/auth-tools/jwt-auth.guard");
-const typeorm_2 = require("typeorm");
 const Joi = require("joi");
 const nodemailer = require("nodemailer");
-const GuestQAndA_entity_1 = require("../../models/GuestQAndA/GuestQAndA.entity");
 const cacheKeys_entity_1 = require("../../models/cacheKeys/cacheKeys.entity");
 const fetch_data_service_1 = require("./fetch-data.service");
 const jwt_1 = require("@nestjs/jwt");
 const nestconfig_interface_1 = require("../../models/config/nestconfig.interface");
-const postlike_entity_1 = require("../../models/postLikes/postlike.entity");
 const reportlogger_entity_1 = require("../../models/reportLogger/reportlogger.entity");
 const usernotifications_entity_1 = require("../../models/usernotifications/usernotifications.entity");
 const user_authentication_service_1 = require("../user-authentication/user-authentication.service");
-const serverchat_entity_1 = require("../../models/serverChat/serverchat.entity");
-const media_entity_1 = require("../../models/media/media.entity");
-const basic_tools_service_1 = require("../../tools/basic-tools/basic-tools.service");
 const question_market_service_1 = require("../question-market/question-market.service");
 let nestconfig = process.env;
 let config = nestconfig_interface_1.SystemDefaultConfig;
@@ -43,8 +35,8 @@ FetchDataController = __decorate([
 ], FetchDataController);
 exports.FetchDataController = FetchDataController;
 let AddSingleAreaController = class AddSingleAreaController {
-    constructor(areaListRepository) {
-        this.areaListRepository = areaListRepository;
+    constructor(fetchDataService) {
+        this.fetchDataService = fetchDataService;
         this.uploadschema = Joi.object({
             area_name: Joi.string().required(),
         });
@@ -55,7 +47,7 @@ let AddSingleAreaController = class AddSingleAreaController {
             if (this.uploadschema.validate(body).error) {
                 throw new common_1.ForbiddenException({ message: (_a = this.uploadschema.validate(body).error) === null || _a === void 0 ? void 0 : _a.message });
             }
-            return (0, rxjs_1.from)(this.areaListRepository.save({
+            return (0, rxjs_1.from)(this.fetchDataService.arealistrepository.save({
                 area_name: body.area_name
             }));
         }
@@ -75,15 +67,12 @@ __decorate([
 ], AddSingleAreaController.prototype, "addsinglearea", null);
 AddSingleAreaController = __decorate([
     (0, common_1.Controller)('addsinglearea'),
-    __param(0, (0, typeorm_1.InjectRepository)(arealist_entity_1.AreaListEntity)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService])
 ], AddSingleAreaController);
 exports.AddSingleAreaController = AddSingleAreaController;
 let UserSubmitQandAController = class UserSubmitQandAController {
-    constructor(guestQandARepository, cacheManager, mediaListRepository) {
-        this.guestQandARepository = guestQandARepository;
-        this.cacheManager = cacheManager;
-        this.mediaListRepository = mediaListRepository;
+    constructor(fetchDataService) {
+        this.fetchDataService = fetchDataService;
         this.uploadschema = Joi.object({
             item_content: Joi.string().required(),
             img_arr: Joi.array().required()
@@ -102,18 +91,18 @@ let UserSubmitQandAController = class UserSubmitQandAController {
             parent_ID: 0,
             user_ID: req.user.user_id
         };
-        let _result = await this.guestQandARepository.save(newQA);
-        await this.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_guestQandAItems);
+        let _result = await this.fetchDataService.guestQandARepository.save(newQA);
+        await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_guestQandAItems);
         for (let i = 0; i < body.img_arr.length; i++) {
             var _updateinfo = {
                 parent_ID: _result.ID,
                 media_status: "publish"
             };
-            await this.mediaListRepository.update({
+            await this.fetchDataService.mediarepository.update({
                 media_name: body.img_arr[i]
             }, _updateinfo);
         }
-        await this.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_questionIMG);
+        await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_questionIMG);
         return;
     }
 };
@@ -128,17 +117,12 @@ __decorate([
 ], UserSubmitQandAController.prototype, "user_submit_QA", null);
 UserSubmitQandAController = __decorate([
     (0, common_1.Controller)('user_submit_QA'),
-    __param(0, (0, typeorm_1.InjectRepository)(GuestQAndA_entity_1.GuestQAndAEntity)),
-    __param(1, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
-    __param(2, (0, typeorm_1.InjectRepository)(media_entity_1.MediaListEntity)),
-    __metadata("design:paramtypes", [typeorm_2.Repository, Object, typeorm_2.Repository])
+    __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService])
 ], UserSubmitQandAController);
 exports.UserSubmitQandAController = UserSubmitQandAController;
 let UserSubmitQandA_AnswerController = class UserSubmitQandA_AnswerController {
-    constructor(guestQandARepository, cacheManager, _fetchdataService, jwt) {
-        this.guestQandARepository = guestQandARepository;
-        this.cacheManager = cacheManager;
-        this._fetchdataService = _fetchdataService;
+    constructor(fetchDataService, jwt) {
+        this.fetchDataService = fetchDataService;
         this.jwt = jwt;
         this.uploadschema = Joi.object({
             QA_ID: Joi.number().required(),
@@ -151,7 +135,7 @@ let UserSubmitQandA_AnswerController = class UserSubmitQandA_AnswerController {
         if (_checker.error) {
             throw new common_1.ForbiddenException({ message: (_a = _checker.error) === null || _a === void 0 ? void 0 : _a.message });
         }
-        let allQAs = await this._fetchdataService.getAllguestQandA_items();
+        let allQAs = await this.fetchDataService.getAllguestQandA_items();
         let foundQA = allQAs.find(y => y.ID == body.QA_ID);
         let foundAnswer = allQAs.find(y => y.parent_ID == body.QA_ID && y.user_email == req.user.user_email && y.item_status == "publish");
         if (foundAnswer) {
@@ -167,8 +151,8 @@ let UserSubmitQandA_AnswerController = class UserSubmitQandA_AnswerController {
             parent_ID: body.QA_ID,
             user_ID: req.user.user_id
         };
-        let _resultAnswer = await this.guestQandARepository.save(newQA);
-        await this.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_guestQandAItems);
+        let _resultAnswer = await this.fetchDataService.guestQandARepository.save(newQA);
+        await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_guestQandAItems);
         let _jwtstr = this.jwt.sign({
             QA_ID: body.QA_ID
         }, {
@@ -262,21 +246,16 @@ __decorate([
 ], UserSubmitQandA_AnswerController.prototype, "user_submit_QA_answer", null);
 UserSubmitQandA_AnswerController = __decorate([
     (0, common_1.Controller)('user_submit_QA_answer'),
-    __param(0, (0, typeorm_1.InjectRepository)(GuestQAndA_entity_1.GuestQAndAEntity)),
-    __param(1, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [typeorm_2.Repository, Object, fetch_data_service_1.FetchDataService,
+    __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService,
         jwt_1.JwtService])
 ], UserSubmitQandA_AnswerController);
 exports.UserSubmitQandA_AnswerController = UserSubmitQandA_AnswerController;
 let UserLikeQA_AnswerController = class UserLikeQA_AnswerController {
-    constructor(postLikesRepository, cacheManager, _fetchdataService, jwt) {
-        this.postLikesRepository = postLikesRepository;
-        this.cacheManager = cacheManager;
-        this._fetchdataService = _fetchdataService;
-        this.jwt = jwt;
+    constructor(fetchDataService) {
+        this.fetchDataService = fetchDataService;
     }
     async userlikeqaanswer(req, body) {
-        return await this._fetchdataService.likeQAAnswer(req.user.user_id, body.answer_ID, false);
+        return await this.fetchDataService.likeQAAnswer(req.user.user_id, body.answer_ID, false);
     }
 };
 __decorate([
@@ -290,10 +269,7 @@ __decorate([
 ], UserLikeQA_AnswerController.prototype, "userlikeqaanswer", null);
 UserLikeQA_AnswerController = __decorate([
     (0, common_1.Controller)('userlike_qaanswer'),
-    __param(0, (0, typeorm_1.InjectRepository)(postlike_entity_1.PostLikeEntity)),
-    __param(1, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [typeorm_2.Repository, Object, fetch_data_service_1.FetchDataService,
-        jwt_1.JwtService])
+    __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService])
 ], UserLikeQA_AnswerController);
 exports.UserLikeQA_AnswerController = UserLikeQA_AnswerController;
 let UserThankyou_QAAnswerController = class UserThankyou_QAAnswerController {
@@ -335,23 +311,21 @@ UserThankyou_QAAnswerController = __decorate([
 ], UserThankyou_QAAnswerController);
 exports.UserThankyou_QAAnswerController = UserThankyou_QAAnswerController;
 let UserDeleteQA_AnswerController = class UserDeleteQA_AnswerController {
-    constructor(guestQandARepository, cacheManager, _fetchdataService) {
-        this.guestQandARepository = guestQandARepository;
-        this.cacheManager = cacheManager;
-        this._fetchdataService = _fetchdataService;
+    constructor(fetchDataService) {
+        this.fetchDataService = fetchDataService;
     }
     async userdeleteqa_answer(req, body) {
-        let allQAs = await this._fetchdataService.getAllguestQandA_items();
+        let allQAs = await this.fetchDataService.getAllguestQandA_items();
         let foundQA = allQAs.find(y => y.ID == body.answer_ID && y.user_email == req.user.user_email);
         if (!foundQA) {
             throw new common_1.BadRequestException({ message: "Answer not found or you are not allowed to access it" });
         }
-        await this.guestQandARepository.update({
+        await this.fetchDataService.guestQandARepository.update({
             ID: foundQA.ID
         }, {
             item_status: "trash"
         });
-        await this.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_guestQandAItems);
+        await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_guestQandAItems);
         return;
     }
 };
@@ -366,33 +340,29 @@ __decorate([
 ], UserDeleteQA_AnswerController.prototype, "userdeleteqa_answer", null);
 UserDeleteQA_AnswerController = __decorate([
     (0, common_1.Controller)('userdeleteqa_answer'),
-    __param(0, (0, typeorm_1.InjectRepository)(GuestQAndA_entity_1.GuestQAndAEntity)),
-    __param(1, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [typeorm_2.Repository, Object, fetch_data_service_1.FetchDataService])
+    __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService])
 ], UserDeleteQA_AnswerController);
 exports.UserDeleteQA_AnswerController = UserDeleteQA_AnswerController;
 let UserLockQAItemController = class UserLockQAItemController {
-    constructor(guestQandARepository, cacheManager, _fetchdataService, jwt) {
-        this.guestQandARepository = guestQandARepository;
-        this.cacheManager = cacheManager;
-        this._fetchdataService = _fetchdataService;
+    constructor(fetchDataService, jwt) {
+        this.fetchDataService = fetchDataService;
         this.jwt = jwt;
     }
     async userdeleteqa_answer(req, query) {
         try {
             let _decoded = this.jwt.verify(query.secretkey);
             if (_decoded.QA_ID) {
-                let allQAs = await this._fetchdataService.getAllguestQandA_items();
+                let allQAs = await this.fetchDataService.getAllguestQandA_items();
                 let foundQA = allQAs.find(y => y.ID == _decoded.QA_ID && y.QA_status == "Closed");
                 if (foundQA) {
                     return "Q&A is locked successfully, you won't get any answer in the future. If you want to unlock it, please go to our Homepage for further information";
                 }
-                await this.guestQandARepository.update({
+                await this.fetchDataService.guestQandARepository.update({
                     ID: _decoded.QA_ID
                 }, {
                     QA_status: "Closed"
                 });
-                await this.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_guestQandAItems);
+                await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_guestQandAItems);
                 return "Q&A is locked successfully, you won't get any answer in the future. If you want to unlock it, please go to our Homepage for further information";
             }
             else {
@@ -414,20 +384,14 @@ __decorate([
 ], UserLockQAItemController.prototype, "userdeleteqa_answer", null);
 UserLockQAItemController = __decorate([
     (0, common_1.Controller)('userlockqaitem'),
-    __param(0, (0, typeorm_1.InjectRepository)(GuestQAndA_entity_1.GuestQAndAEntity)),
-    __param(1, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [typeorm_2.Repository, Object, fetch_data_service_1.FetchDataService,
+    __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService,
         jwt_1.JwtService])
 ], UserLockQAItemController);
 exports.UserLockQAItemController = UserLockQAItemController;
 let ReportInvalidQAController = class ReportInvalidQAController {
-    constructor(_userSevice, cacheManager, userNotificationRepository, reportLoggerRepository, fetchDataService, guestQandARepository) {
+    constructor(_userSevice, fetchDataService) {
         this._userSevice = _userSevice;
-        this.cacheManager = cacheManager;
-        this.userNotificationRepository = userNotificationRepository;
-        this.reportLoggerRepository = reportLoggerRepository;
         this.fetchDataService = fetchDataService;
-        this.guestQandARepository = guestQandARepository;
     }
     async report_invalid_QA_Question(req, body) {
         let allQAs = await this.fetchDataService.getAllguestQandA_items();
@@ -437,7 +401,7 @@ let ReportInvalidQAController = class ReportInvalidQAController {
         }
         let selectedUsers = [];
         let blacklist = [req.user.user_id, foundQA_Question.user_ID];
-        let _allUsers = [...await this._userSevice.getallusers()];
+        let _allUsers = [...await this.fetchDataService.getallusers()];
         let filteredUsers = _allUsers.filter(y => !blacklist.includes(y.ID) && y.is_blocked == false);
         for (let i = 0; i < 5; i++) {
             if (filteredUsers.length > 0) {
@@ -449,7 +413,7 @@ let ReportInvalidQAController = class ReportInvalidQAController {
                 filteredUsers.splice(random, 1);
             }
         }
-        await this.guestQandARepository.update({
+        await this.fetchDataService.guestQandARepository.update({
             ID: body.QA_ID
         }, {
             is_reported: true,
@@ -458,7 +422,7 @@ let ReportInvalidQAController = class ReportInvalidQAController {
             reported_date: new Date(),
             report_notes: body.report_notes
         });
-        await this.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_guestQandAItems);
+        await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_guestQandAItems);
         let _newReportLogger = {
             report_notes: body.report_notes,
             report_sender: req.user.user_id,
@@ -466,8 +430,8 @@ let ReportInvalidQAController = class ReportInvalidQAController {
             parent_ID: body.QA_ID,
             report_type: reportlogger_entity_1.ReportLoggerTypes.QA_Question_ItemInvalid
         };
-        await this.reportLoggerRepository.save(_newReportLogger);
-        await this.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_ReportLogger);
+        await this.fetchDataService.reportLoggerRepository.save(_newReportLogger);
+        await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_ReportLogger);
         let _newNoti = {
             type: usernotifications_entity_1.UserNotification_Types.QA_QuestionItem_isReported,
             data: {
@@ -478,8 +442,8 @@ let ReportInvalidQAController = class ReportInvalidQAController {
             user_IDs: selectedUsers,
             deletion_allowed: []
         };
-        await this.userNotificationRepository.save(_newNoti);
-        await this.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_usernotifications);
+        await this.fetchDataService.userNotificationRepository.save(_newNoti);
+        await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_usernotifications);
         return {
             selectedUsers: selectedUsers
         };
@@ -496,25 +460,17 @@ __decorate([
 ], ReportInvalidQAController.prototype, "report_invalid_QA_Question", null);
 ReportInvalidQAController = __decorate([
     (0, common_1.Controller)('report_invalid_QA_Question'),
-    __param(1, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
-    __param(2, (0, typeorm_1.InjectRepository)(usernotifications_entity_1.UserNotificationEntity)),
-    __param(3, (0, typeorm_1.InjectRepository)(reportlogger_entity_1.ReportLoggerEntity)),
-    __param(5, (0, typeorm_1.InjectRepository)(GuestQAndA_entity_1.GuestQAndAEntity)),
-    __metadata("design:paramtypes", [user_authentication_service_1.UserAuthenticationService, Object, typeorm_2.Repository,
-        typeorm_2.Repository,
-        fetch_data_service_1.FetchDataService,
-        typeorm_2.Repository])
+    __metadata("design:paramtypes", [user_authentication_service_1.UserAuthenticationService,
+        fetch_data_service_1.FetchDataService])
 ], ReportInvalidQAController);
 exports.ReportInvalidQAController = ReportInvalidQAController;
 let ConfirmReportInvalidQA_QuestionController = class ConfirmReportInvalidQA_QuestionController {
-    constructor(_userSevice, userNotificationRepository, fetchDataService, cacheManager) {
+    constructor(_userSevice, fetchDataService) {
         this._userSevice = _userSevice;
-        this.userNotificationRepository = userNotificationRepository;
         this.fetchDataService = fetchDataService;
-        this.cacheManager = cacheManager;
     }
     async confirm_report_invalid_qa_question(req, body) {
-        let allUsers = await this._userSevice.getallusers();
+        let allUsers = await this.fetchDataService.getallusers();
         let allQAs = await this.fetchDataService.getAllguestQandA_items();
         let foundQA = allQAs.find(y => y.ID == body.QA_ID && y.item_type == "question");
         if (!foundQA.report_controllers.includes(req.user.user_id)) {
@@ -522,10 +478,10 @@ let ConfirmReportInvalidQA_QuestionController = class ConfirmReportInvalidQA_Que
         }
         if (!foundQA ||
             foundQA.is_reported == false) {
-            await this.userNotificationRepository.delete({
+            await this.fetchDataService.userNotificationRepository.delete({
                 ID: body.notification_ID
             });
-            await this.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_usernotifications);
+            await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_usernotifications);
             throw new common_1.BadRequestException({ message: "[User Authentication Controller] This report is not available anymore" });
         }
         let author = allUsers.find(y => y.ID == foundQA.user_ID);
@@ -552,21 +508,14 @@ __decorate([
 ], ConfirmReportInvalidQA_QuestionController.prototype, "confirm_report_invalid_qa_question", null);
 ConfirmReportInvalidQA_QuestionController = __decorate([
     (0, common_1.Controller)('confirm_report_invalid_qa_question'),
-    __param(1, (0, typeorm_1.InjectRepository)(usernotifications_entity_1.UserNotificationEntity)),
-    __param(3, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
     __metadata("design:paramtypes", [user_authentication_service_1.UserAuthenticationService,
-        typeorm_2.Repository,
-        fetch_data_service_1.FetchDataService, Object])
+        fetch_data_service_1.FetchDataService])
 ], ConfirmReportInvalidQA_QuestionController);
 exports.ConfirmReportInvalidQA_QuestionController = ConfirmReportInvalidQA_QuestionController;
 let ReportInvalidQA_AnswerController = class ReportInvalidQA_AnswerController {
-    constructor(_userSevice, cacheManager, userNotificationRepository, reportLoggerRepository, fetchDataService, guestQandARepository) {
+    constructor(_userSevice, fetchDataService) {
         this._userSevice = _userSevice;
-        this.cacheManager = cacheManager;
-        this.userNotificationRepository = userNotificationRepository;
-        this.reportLoggerRepository = reportLoggerRepository;
         this.fetchDataService = fetchDataService;
-        this.guestQandARepository = guestQandARepository;
     }
     async report_invalid_QA_Answer(req, body) {
         let allQAs = await this.fetchDataService.getAllguestQandA_items();
@@ -580,7 +529,7 @@ let ReportInvalidQA_AnswerController = class ReportInvalidQA_AnswerController {
         }
         let selectedUsers = [];
         let blacklist = [req.user.user_id];
-        let _allUsers = [...await this._userSevice.getallusers()];
+        let _allUsers = [...await this.fetchDataService.getallusers()];
         let _foundAnswerer = _allUsers.find(y => y.user_email == foundQA_Answer.user_email);
         if (_foundAnswerer) {
             blacklist.push(_foundAnswerer.ID);
@@ -596,7 +545,7 @@ let ReportInvalidQA_AnswerController = class ReportInvalidQA_AnswerController {
                 filteredUsers.splice(random, 1);
             }
         }
-        await this.guestQandARepository.update({
+        await this.fetchDataService.guestQandARepository.update({
             ID: body.QA_ID
         }, {
             is_reported: true,
@@ -605,7 +554,7 @@ let ReportInvalidQA_AnswerController = class ReportInvalidQA_AnswerController {
             reported_date: new Date(),
             report_notes: body.report_notes
         });
-        await this.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_guestQandAItems);
+        await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_guestQandAItems);
         let _newReportLogger = {
             report_notes: body.report_notes,
             report_sender: req.user.user_id,
@@ -613,8 +562,8 @@ let ReportInvalidQA_AnswerController = class ReportInvalidQA_AnswerController {
             parent_ID: body.QA_ID,
             report_type: reportlogger_entity_1.ReportLoggerTypes.QA_Answer_ItemInvalid
         };
-        await this.reportLoggerRepository.save(_newReportLogger);
-        await this.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_ReportLogger);
+        await this.fetchDataService.reportLoggerRepository.save(_newReportLogger);
+        await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_ReportLogger);
         let _newNoti = {
             type: usernotifications_entity_1.UserNotification_Types.QA_AnswerItem_isReported,
             data: {
@@ -626,8 +575,8 @@ let ReportInvalidQA_AnswerController = class ReportInvalidQA_AnswerController {
             user_IDs: selectedUsers,
             deletion_allowed: []
         };
-        await this.userNotificationRepository.save(_newNoti);
-        await this.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_usernotifications);
+        await this.fetchDataService.userNotificationRepository.save(_newNoti);
+        await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_usernotifications);
         return {
             selectedUsers: selectedUsers
         };
@@ -644,25 +593,17 @@ __decorate([
 ], ReportInvalidQA_AnswerController.prototype, "report_invalid_QA_Answer", null);
 ReportInvalidQA_AnswerController = __decorate([
     (0, common_1.Controller)('report_invalid_QA_Answer'),
-    __param(1, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
-    __param(2, (0, typeorm_1.InjectRepository)(usernotifications_entity_1.UserNotificationEntity)),
-    __param(3, (0, typeorm_1.InjectRepository)(reportlogger_entity_1.ReportLoggerEntity)),
-    __param(5, (0, typeorm_1.InjectRepository)(GuestQAndA_entity_1.GuestQAndAEntity)),
-    __metadata("design:paramtypes", [user_authentication_service_1.UserAuthenticationService, Object, typeorm_2.Repository,
-        typeorm_2.Repository,
-        fetch_data_service_1.FetchDataService,
-        typeorm_2.Repository])
+    __metadata("design:paramtypes", [user_authentication_service_1.UserAuthenticationService,
+        fetch_data_service_1.FetchDataService])
 ], ReportInvalidQA_AnswerController);
 exports.ReportInvalidQA_AnswerController = ReportInvalidQA_AnswerController;
 let ConfirmReportInvalidQA_AnswerController = class ConfirmReportInvalidQA_AnswerController {
-    constructor(_userSevice, userNotificationRepository, fetchDataService, cacheManager) {
+    constructor(_userSevice, fetchDataService) {
         this._userSevice = _userSevice;
-        this.userNotificationRepository = userNotificationRepository;
         this.fetchDataService = fetchDataService;
-        this.cacheManager = cacheManager;
     }
     async confirm_report_invalid_qa_answer(req, body) {
-        let allUsers = await this._userSevice.getallusers();
+        let allUsers = await this.fetchDataService.getallusers();
         let allQAs = await this.fetchDataService.getAllguestQandA_items();
         let foundQA = allQAs.find(y => y.ID == body.QA_ID && y.item_type == "answer");
         if (!foundQA ||
@@ -671,10 +612,10 @@ let ConfirmReportInvalidQA_AnswerController = class ConfirmReportInvalidQA_Answe
         }
         if (!foundQA ||
             foundQA.is_reported == false) {
-            await this.userNotificationRepository.delete({
+            await this.fetchDataService.userNotificationRepository.delete({
                 ID: body.notification_ID
             });
-            await this.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_usernotifications);
+            await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_usernotifications);
             throw new common_1.BadRequestException({ message: "[User Authentication Controller] This report is not available anymore" });
         }
         let answerer = allUsers.find(y => y.ID == foundQA.user_ID);
@@ -701,19 +642,13 @@ __decorate([
 ], ConfirmReportInvalidQA_AnswerController.prototype, "confirm_report_invalid_qa_answer", null);
 ConfirmReportInvalidQA_AnswerController = __decorate([
     (0, common_1.Controller)('confirm_report_invalid_qa_answer'),
-    __param(1, (0, typeorm_1.InjectRepository)(usernotifications_entity_1.UserNotificationEntity)),
-    __param(3, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
     __metadata("design:paramtypes", [user_authentication_service_1.UserAuthenticationService,
-        typeorm_2.Repository,
-        fetch_data_service_1.FetchDataService, Object])
+        fetch_data_service_1.FetchDataService])
 ], ConfirmReportInvalidQA_AnswerController);
 exports.ConfirmReportInvalidQA_AnswerController = ConfirmReportInvalidQA_AnswerController;
 let UserSendServerchatMsgController = class UserSendServerchatMsgController {
-    constructor(_userSevice, serverChatRepository, fetchDataService, cacheManager) {
-        this._userSevice = _userSevice;
-        this.serverChatRepository = serverChatRepository;
+    constructor(fetchDataService) {
         this.fetchDataService = fetchDataService;
-        this.cacheManager = cacheManager;
         this.uploadschema = Joi.object({
             server_name: Joi.string().required(),
             message_content: Joi.string().max(500)
@@ -736,8 +671,8 @@ let UserSendServerchatMsgController = class UserSendServerchatMsgController {
             user_email: req.user.user_email,
             user_name: req.user.user_name
         };
-        await this.serverChatRepository.save(_newMsg);
-        await this.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_serverChatItems);
+        await this.fetchDataService.serverChatRepository.save(_newMsg);
+        await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_serverChatItems);
         return;
     }
 };
@@ -752,23 +687,18 @@ __decorate([
 ], UserSendServerchatMsgController.prototype, "user_send_serverchat_msg", null);
 UserSendServerchatMsgController = __decorate([
     (0, common_1.Controller)('user_send_serverchat_msg'),
-    __param(1, (0, typeorm_1.InjectRepository)(serverchat_entity_1.ServerChatEntity)),
-    __param(3, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [user_authentication_service_1.UserAuthenticationService,
-        typeorm_2.Repository,
-        fetch_data_service_1.FetchDataService, Object])
+    __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService])
 ], UserSendServerchatMsgController);
 exports.UserSendServerchatMsgController = UserSendServerchatMsgController;
 let RemoveAllUserServerChatContentController = class RemoveAllUserServerChatContentController {
-    constructor(serverChatRepository, cacheManager) {
-        this.serverChatRepository = serverChatRepository;
-        this.cacheManager = cacheManager;
+    constructor(fetchDataService) {
+        this.fetchDataService = fetchDataService;
     }
     async remove_all_user_serverchat_content(req, body) {
-        await this.serverChatRepository.delete({
+        await this.fetchDataService.serverChatRepository.delete({
             user_ID: req.user.user_id
         });
-        await this.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_serverChatItems);
+        await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_serverChatItems);
         return;
     }
 };
@@ -783,23 +713,19 @@ __decorate([
 ], RemoveAllUserServerChatContentController.prototype, "remove_all_user_serverchat_content", null);
 RemoveAllUserServerChatContentController = __decorate([
     (0, common_1.Controller)('remove_all_user_serverchat_content'),
-    __param(0, (0, typeorm_1.InjectRepository)(serverchat_entity_1.ServerChatEntity)),
-    __param(1, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [typeorm_2.Repository, Object])
+    __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService])
 ], RemoveAllUserServerChatContentController);
 exports.RemoveAllUserServerChatContentController = RemoveAllUserServerChatContentController;
 let Upload_QandA_ImageByFileController = class Upload_QandA_ImageByFileController {
-    constructor(basictools, mediarepository, questionMarketService, cacheManager) {
-        this.basictools = basictools;
-        this.mediarepository = mediarepository;
+    constructor(questionMarketService, fetchDataService) {
         this.questionMarketService = questionMarketService;
-        this.cacheManager = cacheManager;
+        this.fetchDataService = fetchDataService;
     }
     uploadqandaimgbyimgfile(req, query) {
         let path_to_save = config.QA_IMG_PATH;
         if (query.file_size && query.file_size < 25000000) {
             return (0, rxjs_1.from)(this.questionMarketService.getusertempmediafiles(req.user).then(() => {
-                return this.basictools.formuploadIMG(req, query.file_obj_name, path_to_save, req.user);
+                return this.fetchDataService.basictools.formuploadIMG(req, query.file_obj_name, path_to_save, req.user);
             }).then(async (result) => {
                 let mediapayload = {
                     media_name: result.newFilename,
@@ -810,8 +736,8 @@ let Upload_QandA_ImageByFileController = class Upload_QandA_ImageByFileControlle
                     media_category: config.QA_IMG_CAT,
                     media_status: "trash"
                 };
-                await this.mediarepository.save(mediapayload);
-                await this.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_trash_medias);
+                await this.fetchDataService.mediarepository.save(mediapayload);
+                await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_trash_medias);
                 return result;
             }).catch((error) => {
                 throw error;
@@ -833,23 +759,18 @@ __decorate([
 ], Upload_QandA_ImageByFileController.prototype, "uploadqandaimgbyimgfile", null);
 Upload_QandA_ImageByFileController = __decorate([
     (0, common_1.Controller)('uploadqandaimgbyimgfile'),
-    __param(1, (0, typeorm_1.InjectRepository)(media_entity_1.MediaListEntity)),
-    __param(3, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [basic_tools_service_1.BasicToolsService,
-        typeorm_2.Repository,
-        question_market_service_1.QuestionMarketService, Object])
+    __metadata("design:paramtypes", [question_market_service_1.QuestionMarketService,
+        fetch_data_service_1.FetchDataService])
 ], Upload_QandA_ImageByFileController);
 exports.Upload_QandA_ImageByFileController = Upload_QandA_ImageByFileController;
 let Upload_QandA_ImageByUrlController = class Upload_QandA_ImageByUrlController {
-    constructor(basictools, mediarepository, localService, cacheManager) {
-        this.basictools = basictools;
-        this.mediarepository = mediarepository;
+    constructor(fetchDataService, localService) {
+        this.fetchDataService = fetchDataService;
         this.localService = localService;
-        this.cacheManager = cacheManager;
     }
     uploadqandaimgbyurl(req, body) {
         return (0, rxjs_1.from)(this.localService.getusertempmediafiles(req.user).then(() => {
-            return this.basictools.uploadimgbyurl(body.img_url, config.QA_IMG_PATH, req.user);
+            return this.fetchDataService.basictools.uploadimgbyurl(body.img_url, config.QA_IMG_PATH, req.user);
         }).then(async (result) => {
             let mediapayload = {
                 media_name: result.newFilename,
@@ -860,8 +781,8 @@ let Upload_QandA_ImageByUrlController = class Upload_QandA_ImageByUrlController 
                 media_category: config.QA_IMG_CAT,
                 media_status: "trash"
             };
-            await this.mediarepository.save(mediapayload);
-            await this.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_trash_medias);
+            await this.fetchDataService.mediarepository.save(mediapayload);
+            await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_trash_medias);
             return result;
         }).catch((error) => {
             throw error;
@@ -879,32 +800,27 @@ __decorate([
 ], Upload_QandA_ImageByUrlController.prototype, "uploadqandaimgbyurl", null);
 Upload_QandA_ImageByUrlController = __decorate([
     (0, common_1.Controller)('uploadqandaimgbyurl'),
-    __param(1, (0, typeorm_1.InjectRepository)(media_entity_1.MediaListEntity)),
-    __param(3, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [basic_tools_service_1.BasicToolsService,
-        typeorm_2.Repository,
-        question_market_service_1.QuestionMarketService, Object])
+    __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService,
+        question_market_service_1.QuestionMarketService])
 ], Upload_QandA_ImageByUrlController);
 exports.Upload_QandA_ImageByUrlController = Upload_QandA_ImageByUrlController;
 let DeleteTemp_QandA_ImageController = class DeleteTemp_QandA_ImageController {
-    constructor(basictools, mediarepository, cacheManager) {
-        this.basictools = basictools;
-        this.mediarepository = mediarepository;
-        this.cacheManager = cacheManager;
+    constructor(fetchDataService) {
+        this.fetchDataService = fetchDataService;
     }
     async deletetemporary_qanda_img(req, body) {
-        let _file = await this.mediarepository.findOne({
+        let _file = await this.fetchDataService.mediarepository.findOne({
             media_name: body.img_name,
             user_ID: req.user.user_id
         });
         if (_file) {
-            await this.basictools.deleteunusedcdn([_file.media_path], req.user);
-            let _result = await this.mediarepository.delete({
+            await this.fetchDataService.basictools.deleteunusedcdn([_file.media_path], req.user);
+            let _result = await this.fetchDataService.mediarepository.delete({
                 media_name: body.img_name,
                 user_ID: req.user.user_id
             });
-            await this.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_QA_images);
-            await this.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_trash_medias);
+            await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_QA_images);
+            await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_trash_medias);
             return _result;
         }
         else {
@@ -923,10 +839,22 @@ __decorate([
 ], DeleteTemp_QandA_ImageController.prototype, "deletetemporary_qanda_img", null);
 DeleteTemp_QandA_ImageController = __decorate([
     (0, common_1.Controller)('deletetemporary_qanda_img'),
-    __param(1, (0, typeorm_1.InjectRepository)(media_entity_1.MediaListEntity)),
-    __param(2, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [basic_tools_service_1.BasicToolsService,
-        typeorm_2.Repository, Object])
+    __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService])
 ], DeleteTemp_QandA_ImageController);
 exports.DeleteTemp_QandA_ImageController = DeleteTemp_QandA_ImageController;
+let TestController = class TestController {
+    result() {
+        return { message: "Success" };
+    }
+};
+__decorate([
+    (0, common_1.Get)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], TestController.prototype, "result", null);
+TestController = __decorate([
+    (0, common_1.Controller)('testapi')
+], TestController);
+exports.TestController = TestController;
 //# sourceMappingURL=fetch-data.controller.js.map

@@ -15,13 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuestionMarketInfoResolver = void 0;
 const common_1 = require("@nestjs/common");
 const graphql_1 = require("@nestjs/graphql");
-const typeorm_1 = require("@nestjs/typeorm");
 const fetch_data_service_1 = require("../../controllers/fetch-data/fetch-data.service");
 const question_market_service_1 = require("../../controllers/question-market/question-market.service");
-const user_authentication_service_1 = require("../../controllers/user-authentication/user-authentication.service");
 const jwt_auth_guard_1 = require("../../tools/auth-tools/jwt-auth.guard");
 const user_decorator_1 = require("../../tools/auth-tools/user.decorator");
-const typeorm_2 = require("typeorm");
 const arealist_entity_1 = require("../arealist/arealist.entity");
 const nestconfig_interface_1 = require("../config/nestconfig.interface");
 const defaultconfig_entity_1 = require("../defaultconfig/defaultconfig.entity");
@@ -30,19 +27,17 @@ const userauth_entity_1 = require("../userauthentication/userauth.entity");
 const questionmarketinfo_entity_1 = require("./questionmarketinfo.entity");
 let config = nestconfig_interface_1.SystemDefaultConfig;
 let QuestionMarketInfoResolver = class QuestionMarketInfoResolver {
-    constructor(_fetchdataService, _userauthService, QuestionMarketInfoRepository, _questionMarketService) {
-        this._fetchdataService = _fetchdataService;
-        this._userauthService = _userauthService;
-        this.QuestionMarketInfoRepository = QuestionMarketInfoRepository;
+    constructor(fetchDataService, _questionMarketService) {
+        this.fetchDataService = fetchDataService;
         this._questionMarketService = _questionMarketService;
     }
     async questionmarketinfo(user) {
-        await this._fetchdataService.deleteall_unused_cdnfiles(user);
-        let _result = await this.QuestionMarketInfoRepository.find();
+        await this.fetchDataService.deleteall_unused_cdnfiles(user);
+        let _result = await this.fetchDataService.questionMarketInfoRepository.find();
         return _result;
     }
     async product_tree(user) {
-        return this._fetchdataService.getallarea();
+        return this.fetchDataService.getallarea();
     }
     async answer_reviews(user) {
         let _cache = await this._questionMarketService.getAllUserAnswerReviews();
@@ -60,12 +55,12 @@ let QuestionMarketInfoResolver = class QuestionMarketInfoResolver {
         return _config;
     }
     async userinfo(user) {
-        let _allusers = await this._userauthService.getallusers();
+        let _allusers = await this.fetchDataService.getallusers();
         let _result = _allusers.find(y => y.ID == user.user_id);
         return _result;
     }
     async shop_items(user) {
-        let allItems = await this._fetchdataService.getAll_ShopItems();
+        let allItems = await this.fetchDataService.getAll_ShopItems();
         return allItems;
     }
 };
@@ -118,10 +113,7 @@ __decorate([
 ], QuestionMarketInfoResolver.prototype, "shop_items", null);
 QuestionMarketInfoResolver = __decorate([
     (0, graphql_1.Resolver)(() => questionmarketinfo_entity_1.QuestionMarketInfoEntity),
-    __param(2, (0, typeorm_1.InjectRepository)(questionmarketinfo_entity_1.QuestionMarketInfoEntity)),
     __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService,
-        user_authentication_service_1.UserAuthenticationService,
-        typeorm_2.Repository,
         question_market_service_1.QuestionMarketService])
 ], QuestionMarketInfoResolver);
 exports.QuestionMarketInfoResolver = QuestionMarketInfoResolver;

@@ -1,18 +1,16 @@
 import { FetchDataService } from "src/controllers/fetch-data/fetch-data.service";
 import { LessonHandlerService } from "src/controllers/lesson-handler/lesson-handler.service";
 import { QuestionMarketService } from "src/controllers/question-market/question-market.service";
-import { UserAuthenticationService } from "src/controllers/user-authentication/user-authentication.service";
 import { MediaListEntity } from "../media/media.entity";
 import { PostEntity } from "../post/post.entity";
 import { QuestionMarketAnswerEntity } from "../questionmarketanswer/questionmarketanswer.entity";
 import { QuestionMarket_UserAnswerEntity } from "../QuestionMarket_UserAnswer/questionmarket_useranswer.entity";
 import { userJWTpayload } from "../userJWTpayload/userJWTpayload.interface";
 export declare class PostEntityResolver {
-    private _fetchdataService;
+    private fetchDataService;
     private _questionmarketService;
     private _lessonhandlerservice;
-    private _userauthService;
-    constructor(_fetchdataService: FetchDataService, _questionmarketService: QuestionMarketService, _lessonhandlerservice: LessonHandlerService, _userauthService: UserAuthenticationService);
+    constructor(fetchDataService: FetchDataService, _questionmarketService: QuestionMarketService, _lessonhandlerservice: LessonHandlerService);
     lesson_avatar(PostEntity: PostEntity): Promise<MediaListEntity>;
     question_avatar(PostEntity: PostEntity): Promise<MediaListEntity>;
     question_answer(user: userJWTpayload, PostEntity: PostEntity): Promise<QuestionMarketAnswerEntity>;

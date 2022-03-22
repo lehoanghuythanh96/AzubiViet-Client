@@ -21,10 +21,7 @@ let config = SystemDefaultConfig;
 export class QuestionMarketInfoResolver {
 
     constructor(
-        private readonly _fetchdataService: FetchDataService,
-        private readonly _userauthService: UserAuthenticationService,
-        @InjectRepository(QuestionMarketInfoEntity)
-        private readonly QuestionMarketInfoRepository: Repository<QuestionMarketInfoEntity>,
+        private readonly fetchDataService: FetchDataService,
         private _questionMarketService: QuestionMarketService,
     ) {
     }
@@ -33,16 +30,16 @@ export class QuestionMarketInfoResolver {
     @Query(() => QuestionMarketInfoEntity)
     @UseGuards(GqlJwtAuthGuard)
     async questionmarketinfo(@JwtCurrentUser() user: userJWTpayload) {
-        await this._fetchdataService.deleteall_unused_cdnfiles(user);
+        await this.fetchDataService.deleteall_unused_cdnfiles(user);
         
-        let _result = await this.QuestionMarketInfoRepository.find();
+        let _result = await this.fetchDataService.questionMarketInfoRepository.find();
         return _result;
     }
 
     @ResolveField(() => [AreaListEntity])
     @UseGuards(GqlJwtAuthGuard)
     async product_tree(@JwtCurrentUser() user: userJWTpayload) {
-        return this._fetchdataService.getallarea();
+        return this.fetchDataService.getallarea();
     }
 
     @ResolveField(() => [UserAnswerReviewEntity])
@@ -74,7 +71,7 @@ export class QuestionMarketInfoResolver {
     @UseGuards(GqlJwtAuthGuard)
     async userinfo(@JwtCurrentUser() user: userJWTpayload) {
 
-        let _allusers = await this._userauthService.getallusers();
+        let _allusers = await this.fetchDataService.getallusers();
 
         let _result = _allusers.find(y => y.ID == user.user_id)
 
@@ -85,7 +82,7 @@ export class QuestionMarketInfoResolver {
     @UseGuards(GqlJwtAuthGuard)
     async shop_items(@JwtCurrentUser() user: userJWTpayload) {
 
-        let allItems = await this._fetchdataService.getAll_ShopItems();
+        let allItems = await this.fetchDataService.getAll_ShopItems();
 
         return allItems;
     }

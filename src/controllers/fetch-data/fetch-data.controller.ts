@@ -31,8 +31,7 @@ export class FetchDataController { }
 @Controller('addsinglearea')
 export class AddSingleAreaController {
     constructor(
-        @InjectRepository(AreaListEntity)
-        private readonly areaListRepository: Repository<AreaListEntity>
+        private fetchDataService: FetchDataService,
     ) { }
 
     uploadschema = Joi.object({
@@ -47,7 +46,7 @@ export class AddSingleAreaController {
                 throw new ForbiddenException({ message: this.uploadschema.validate(body).error?.message });
             }
             return from(
-                this.areaListRepository.save({
+                this.fetchDataService.arealistrepository.save({
                     area_name: body.area_name
                 })
             )
@@ -60,11 +59,7 @@ export class AddSingleAreaController {
 @Controller('user_submit_QA')
 export class UserSubmitQandAController {
     constructor(
-        @InjectRepository(GuestQAndAEntity)
-        private readonly guestQandARepository: Repository<GuestQAndAEntity>,
-        @Inject(CACHE_MANAGER) private cacheManager: AppCache,
-        @InjectRepository(MediaListEntity)
-        private mediaListRepository: Repository<MediaListEntity>
+        private fetchDataService: FetchDataService
     ) { }
 
     uploadschema = Joi.object({
@@ -92,15 +87,15 @@ export class UserSubmitQandAController {
             user_ID: req.user.user_id
         }
 
-        let _result = await this.guestQandARepository.save(newQA)
-        await this.cacheManager.store.del(_cacheKey.all_guestQandAItems)
+        let _result = await this.fetchDataService.guestQandARepository.save(newQA)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_guestQandAItems)
         
         for (let i = 0; i < body.img_arr.length; i++) {
             var _updateinfo: UpdateFormUploadMediaInput = {
                 parent_ID: _result.ID,
                 media_status: "publish"
             }
-            await this.mediaListRepository.update(
+            await this.fetchDataService.mediarepository.update(
                 {
                     media_name: body.img_arr[i]
                 },
@@ -108,7 +103,7 @@ export class UserSubmitQandAController {
             )
         }
 
-        await this.cacheManager.store.del(_cacheKey.all_questionIMG)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_questionIMG)
 
         return
 
@@ -118,10 +113,7 @@ export class UserSubmitQandAController {
 @Controller('user_submit_QA_answer')
 export class UserSubmitQandA_AnswerController {
     constructor(
-        @InjectRepository(GuestQAndAEntity)
-        private readonly guestQandARepository: Repository<GuestQAndAEntity>,
-        @Inject(CACHE_MANAGER) private cacheManager: AppCache,
-        private _fetchdataService: FetchDataService,
+        private fetchDataService: FetchDataService,
         private jwt: JwtService
     ) { }
 
@@ -142,7 +134,7 @@ export class UserSubmitQandA_AnswerController {
             throw new ForbiddenException({ message: _checker.error?.message });
         }
 
-        let allQAs = await this._fetchdataService.getAllguestQandA_items();
+        let allQAs = await this.fetchDataService.getAllguestQandA_items();
         let foundQA = allQAs.find(
             y => y.ID == body.QA_ID
         )
@@ -167,8 +159,8 @@ export class UserSubmitQandA_AnswerController {
             user_ID: req.user.user_id
         }
 
-        let _resultAnswer = await this.guestQandARepository.save(newQA)
-        await this.cacheManager.store.del(_cacheKey.all_guestQandAItems)
+        let _resultAnswer = await this.fetchDataService.guestQandARepository.save(newQA)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_guestQandAItems)
 
         let _jwtstr = this.jwt.sign(
             {
@@ -270,11 +262,7 @@ export class UserSubmitQandA_AnswerController {
 @Controller('userlike_qaanswer')
 export class UserLikeQA_AnswerController {
     constructor(
-        @InjectRepository(PostLikeEntity)
-        private readonly postLikesRepository: Repository<PostLikeEntity>,
-        @Inject(CACHE_MANAGER) private cacheManager: AppCache,
-        private _fetchdataService: FetchDataService,
-        private jwt: JwtService
+        private fetchDataService: FetchDataService
     ) { }
 
     @UseGuards(JwtAuthGuard)
@@ -283,7 +271,7 @@ export class UserLikeQA_AnswerController {
         answer_ID: number
     }) {
 
-        return await this._fetchdataService.likeQAAnswer(
+        return await this.fetchDataService.likeQAAnswer(
             req.user.user_id,
             body.answer_ID,
             false
@@ -339,10 +327,7 @@ export class UserThankyou_QAAnswerController {
 @Controller('userdeleteqa_answer')
 export class UserDeleteQA_AnswerController {
     constructor(
-        @InjectRepository(GuestQAndAEntity)
-        private readonly guestQandARepository: Repository<GuestQAndAEntity>,
-        @Inject(CACHE_MANAGER) private cacheManager: AppCache,
-        private _fetchdataService: FetchDataService,
+        private fetchDataService: FetchDataService
     ) { }
 
     @UseGuards(JwtAuthGuard)
@@ -351,7 +336,7 @@ export class UserDeleteQA_AnswerController {
         answer_ID: number
     }) {
 
-        let allQAs = await this._fetchdataService.getAllguestQandA_items();
+        let allQAs = await this.fetchDataService.getAllguestQandA_items();
         let foundQA = allQAs.find(
             y => y.ID == body.answer_ID && y.user_email == req.user.user_email
         )
@@ -360,7 +345,7 @@ export class UserDeleteQA_AnswerController {
             throw new BadRequestException({ message: "Answer not found or you are not allowed to access it" })
         }
 
-        await this.guestQandARepository.update(
+        await this.fetchDataService.guestQandARepository.update(
             {
                 ID: foundQA.ID
             },
@@ -368,7 +353,7 @@ export class UserDeleteQA_AnswerController {
                 item_status: "trash"
             }
         )
-        await this.cacheManager.store.del(_cacheKey.all_guestQandAItems)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_guestQandAItems)
 
         return
 
@@ -378,10 +363,7 @@ export class UserDeleteQA_AnswerController {
 @Controller('userlockqaitem')
 export class UserLockQAItemController {
     constructor(
-        @InjectRepository(GuestQAndAEntity)
-        private readonly guestQandARepository: Repository<GuestQAndAEntity>,
-        @Inject(CACHE_MANAGER) private cacheManager: AppCache,
-        private _fetchdataService: FetchDataService,
+        private fetchDataService: FetchDataService,
         private jwt: JwtService
     ) { }
 
@@ -390,14 +372,14 @@ export class UserLockQAItemController {
         try {
             let _decoded = this.jwt.verify(query.secretkey)
             if (_decoded.QA_ID) {
-                let allQAs = await this._fetchdataService.getAllguestQandA_items();
+                let allQAs = await this.fetchDataService.getAllguestQandA_items();
                 let foundQA = allQAs.find(
                     y => y.ID == _decoded.QA_ID && y.QA_status == "Closed"
                 )
                 if (foundQA) {
                     return "Q&A is locked successfully, you won't get any answer in the future. If you want to unlock it, please go to our Homepage for further information"
                 }
-                await this.guestQandARepository.update(
+                await this.fetchDataService.guestQandARepository.update(
                     {
                         ID: _decoded.QA_ID
                     },
@@ -405,7 +387,7 @@ export class UserLockQAItemController {
                         QA_status: "Closed"
                     }
                 )
-                await this.cacheManager.store.del(_cacheKey.all_guestQandAItems)
+                await this.fetchDataService.cacheManager.store.del(_cacheKey.all_guestQandAItems)
                 return "Q&A is locked successfully, you won't get any answer in the future. If you want to unlock it, please go to our Homepage for further information"
             } else {
                 throw new BadRequestException({ message: "Invalid token" })
@@ -421,15 +403,7 @@ export class ReportInvalidQAController {
 
     constructor(
         private _userSevice: UserAuthenticationService,
-        @Inject(CACHE_MANAGER)
-        private cacheManager: AppCache,
-        @InjectRepository(UserNotificationEntity)
-        private userNotificationRepository: Repository<UserNotificationEntity>,
-        @InjectRepository(ReportLoggerEntity)
-        private reportLoggerRepository: Repository<ReportLoggerEntity>,
         private fetchDataService: FetchDataService,
-        @InjectRepository(GuestQAndAEntity)
-        private guestQandARepository: Repository<GuestQAndAEntity>,
     ) { }
 
     @UseGuards(JwtAuthGuard)
@@ -453,7 +427,7 @@ export class ReportInvalidQAController {
         let selectedUsers: number[] = [];
         let blacklist = [req.user.user_id, foundQA_Question.user_ID]
 
-        let _allUsers = [...await this._userSevice.getallusers()];
+        let _allUsers = [...await this.fetchDataService.getallusers()];
         let filteredUsers = _allUsers.filter(
             y => !blacklist.includes(y.ID) && y.is_blocked == false
         )
@@ -470,7 +444,7 @@ export class ReportInvalidQAController {
             }
         }
 
-        await this.guestQandARepository.update(
+        await this.fetchDataService.guestQandARepository.update(
             {
                 ID: body.QA_ID
             },
@@ -483,7 +457,7 @@ export class ReportInvalidQAController {
             }
         )
 
-        await this.cacheManager.store.del(_cacheKey.all_guestQandAItems)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_guestQandAItems)
 
         let _newReportLogger: ReportLoggerInput = {
             report_notes: body.report_notes,
@@ -493,8 +467,8 @@ export class ReportInvalidQAController {
             report_type: ReportLoggerTypes.QA_Question_ItemInvalid
         }
 
-        await this.reportLoggerRepository.save(_newReportLogger)
-        await this.cacheManager.store.del(_cacheKey.all_ReportLogger)
+        await this.fetchDataService.reportLoggerRepository.save(_newReportLogger)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_ReportLogger)
 
         let _newNoti: UserNotificationInput = {
             type: UserNotification_Types.QA_QuestionItem_isReported,
@@ -506,8 +480,8 @@ export class ReportInvalidQAController {
             user_IDs: selectedUsers,
             deletion_allowed: []
         }
-        await this.userNotificationRepository.save(_newNoti)
-        await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+        await this.fetchDataService.userNotificationRepository.save(_newNoti)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
 
         return {
             selectedUsers: selectedUsers
@@ -521,10 +495,7 @@ export class ConfirmReportInvalidQA_QuestionController {
 
     constructor(
         private _userSevice: UserAuthenticationService,
-        @InjectRepository(UserNotificationEntity)
-        private userNotificationRepository: Repository<UserNotificationEntity>,
         private fetchDataService: FetchDataService,
-        @Inject(CACHE_MANAGER) private cacheManager: AppCache
     ) { }
 
     @UseGuards(JwtAuthGuard)
@@ -535,7 +506,7 @@ export class ConfirmReportInvalidQA_QuestionController {
         report_result: boolean
     }) {
 
-        let allUsers = await this._userSevice.getallusers();
+        let allUsers = await this.fetchDataService.getallusers();
         let allQAs = await this.fetchDataService.getAllguestQandA_items();
 
         let foundQA = allQAs.find(
@@ -552,10 +523,10 @@ export class ConfirmReportInvalidQA_QuestionController {
             !foundQA ||
             foundQA.is_reported == false
         ) {
-            await this.userNotificationRepository.delete({
+            await this.fetchDataService.userNotificationRepository.delete({
                 ID: body.notification_ID
             })
-            await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
             throw new BadRequestException({ message: "[User Authentication Controller] This report is not available anymore" })
         }
 
@@ -597,15 +568,7 @@ export class ReportInvalidQA_AnswerController {
 
     constructor(
         private _userSevice: UserAuthenticationService,
-        @Inject(CACHE_MANAGER)
-        private cacheManager: AppCache,
-        @InjectRepository(UserNotificationEntity)
-        private userNotificationRepository: Repository<UserNotificationEntity>,
-        @InjectRepository(ReportLoggerEntity)
-        private reportLoggerRepository: Repository<ReportLoggerEntity>,
         private fetchDataService: FetchDataService,
-        @InjectRepository(GuestQAndAEntity)
-        private guestQandARepository: Repository<GuestQAndAEntity>,
     ) { }
 
     @UseGuards(JwtAuthGuard)
@@ -639,7 +602,7 @@ export class ReportInvalidQA_AnswerController {
         let selectedUsers: number[] = [];
         let blacklist = [req.user.user_id]
 
-        let _allUsers = [...await this._userSevice.getallusers()];
+        let _allUsers = [...await this.fetchDataService.getallusers()];
         let _foundAnswerer = _allUsers.find(
             y => y.user_email == foundQA_Answer.user_email
         )
@@ -662,7 +625,7 @@ export class ReportInvalidQA_AnswerController {
             }
         }
 
-        await this.guestQandARepository.update(
+        await this.fetchDataService.guestQandARepository.update(
             {
                 ID: body.QA_ID
             },
@@ -675,7 +638,7 @@ export class ReportInvalidQA_AnswerController {
             }
         )
 
-        await this.cacheManager.store.del(_cacheKey.all_guestQandAItems)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_guestQandAItems)
 
         let _newReportLogger: ReportLoggerInput = {
             report_notes: body.report_notes,
@@ -685,8 +648,8 @@ export class ReportInvalidQA_AnswerController {
             report_type: ReportLoggerTypes.QA_Answer_ItemInvalid
         }
 
-        await this.reportLoggerRepository.save(_newReportLogger)
-        await this.cacheManager.store.del(_cacheKey.all_ReportLogger)
+        await this.fetchDataService.reportLoggerRepository.save(_newReportLogger)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_ReportLogger)
 
         let _newNoti: UserNotificationInput = {
             type: UserNotification_Types.QA_AnswerItem_isReported,
@@ -699,8 +662,8 @@ export class ReportInvalidQA_AnswerController {
             user_IDs: selectedUsers,
             deletion_allowed: []
         }
-        await this.userNotificationRepository.save(_newNoti)
-        await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+        await this.fetchDataService.userNotificationRepository.save(_newNoti)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
 
         return {
             selectedUsers: selectedUsers
@@ -714,10 +677,7 @@ export class ConfirmReportInvalidQA_AnswerController {
 
     constructor(
         private _userSevice: UserAuthenticationService,
-        @InjectRepository(UserNotificationEntity)
-        private userNotificationRepository: Repository<UserNotificationEntity>,
         private fetchDataService: FetchDataService,
-        @Inject(CACHE_MANAGER) private cacheManager: AppCache
     ) { }
 
     @UseGuards(JwtAuthGuard)
@@ -728,7 +688,7 @@ export class ConfirmReportInvalidQA_AnswerController {
         report_result: boolean
     }) {
 
-        let allUsers = await this._userSevice.getallusers();
+        let allUsers = await this.fetchDataService.getallusers();
         let allQAs = await this.fetchDataService.getAllguestQandA_items();
 
         let foundQA = allQAs.find(
@@ -746,10 +706,10 @@ export class ConfirmReportInvalidQA_AnswerController {
             !foundQA ||
             foundQA.is_reported == false
         ) {
-            await this.userNotificationRepository.delete({
+            await this.fetchDataService.userNotificationRepository.delete({
                 ID: body.notification_ID
             })
-            await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
             throw new BadRequestException({ message: "[User Authentication Controller] This report is not available anymore" })
         }
 
@@ -790,11 +750,7 @@ export class ConfirmReportInvalidQA_AnswerController {
 export class UserSendServerchatMsgController {
 
     constructor(
-        private _userSevice: UserAuthenticationService,
-        @InjectRepository(ServerChatEntity)
-        private serverChatRepository: Repository<ServerChatEntity>,
         private fetchDataService: FetchDataService,
-        @Inject(CACHE_MANAGER) private cacheManager: AppCache
     ) { }
 
     uploadschema = Joi.object({
@@ -832,8 +788,8 @@ export class UserSendServerchatMsgController {
             user_name: req.user.user_name
         }
 
-        await this.serverChatRepository.save(_newMsg)
-        await this.cacheManager.store.del(_cacheKey.all_serverChatItems)
+        await this.fetchDataService.serverChatRepository.save(_newMsg)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_serverChatItems)
 
         return
 
@@ -844,18 +800,16 @@ export class UserSendServerchatMsgController {
 export class RemoveAllUserServerChatContentController{
 
     constructor(
-        @InjectRepository(ServerChatEntity)
-        private serverChatRepository: Repository<ServerChatEntity>,
-        @Inject(CACHE_MANAGER) private cacheManager: AppCache
+        private fetchDataService: FetchDataService,
     ) { }
 
     @UseGuards(JwtAuthGuard)
     @Post()
     async remove_all_user_serverchat_content(@Request() req: JwtAuthGuardReq, @Body() body: {}) {
-        await this.serverChatRepository.delete({
+        await this.fetchDataService.serverChatRepository.delete({
             user_ID: req.user.user_id
         })
-        await this.cacheManager.store.del(_cacheKey.all_serverChatItems)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_serverChatItems)
         return
     }
 
@@ -865,11 +819,8 @@ export class RemoveAllUserServerChatContentController{
 @Controller('uploadqandaimgbyimgfile')
 export class Upload_QandA_ImageByFileController {
     constructor(
-        private basictools: BasicToolsService,
-        @InjectRepository(MediaListEntity)
-        private readonly mediarepository: Repository<MediaListEntity>,
         private readonly questionMarketService: QuestionMarketService,
-        @Inject(CACHE_MANAGER) private readonly cacheManager: AppCache
+        private fetchDataService: FetchDataService,
     ) { }
 
     @UseGuards(JwtAuthGuard)
@@ -880,7 +831,7 @@ export class Upload_QandA_ImageByFileController {
             return from(
                 this.questionMarketService.getusertempmediafiles(req.user).then(
                     () => {
-                        return this.basictools.formuploadIMG(req, query.file_obj_name, path_to_save, req.user)
+                        return this.fetchDataService.basictools.formuploadIMG(req, query.file_obj_name, path_to_save, req.user)
                     }
                 ).then(
                     async (result: any) => {
@@ -893,8 +844,8 @@ export class Upload_QandA_ImageByFileController {
                             media_category: config.QA_IMG_CAT,
                             media_status: "trash"
                         }
-                        await this.mediarepository.save(mediapayload);
-                        await this.cacheManager.store.del(_cacheKey.all_trash_medias)
+                        await this.fetchDataService.mediarepository.save(mediapayload);
+                        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_trash_medias)
                         // Must return result from ConvertWebPandMove Fn
                         return result;
                     }
@@ -914,11 +865,8 @@ export class Upload_QandA_ImageByFileController {
 export class Upload_QandA_ImageByUrlController {
 
     constructor(
-        private readonly basictools: BasicToolsService,
-        @InjectRepository(MediaListEntity)
-        private readonly mediarepository: Repository<MediaListEntity>,
+        private fetchDataService: FetchDataService,
         private readonly localService: QuestionMarketService,
-        @Inject(CACHE_MANAGER) private readonly cacheManager: AppCache
     ) {
     }
 
@@ -928,7 +876,7 @@ export class Upload_QandA_ImageByUrlController {
         return from(
             this.localService.getusertempmediafiles(req.user).then(
                 () => {
-                    return this.basictools.uploadimgbyurl(
+                    return this.fetchDataService.basictools.uploadimgbyurl(
                         body.img_url,
                         config.QA_IMG_PATH,
                         req.user
@@ -945,8 +893,8 @@ export class Upload_QandA_ImageByUrlController {
                         media_category: config.QA_IMG_CAT,
                         media_status: "trash"
                     }
-                    await this.mediarepository.save(mediapayload);
-                    await this.cacheManager.store.del(_cacheKey.all_trash_medias)
+                    await this.fetchDataService.mediarepository.save(mediapayload);
+                    await this.fetchDataService.cacheManager.store.del(_cacheKey.all_trash_medias)
                     // Must return result from ConvertWebPandMove Fn
                     return result;
                 }
@@ -964,29 +912,26 @@ export class Upload_QandA_ImageByUrlController {
 export class DeleteTemp_QandA_ImageController {
 
     constructor(
-        private readonly basictools: BasicToolsService,
-        @InjectRepository(MediaListEntity)
-        private readonly mediarepository: Repository<MediaListEntity>,
-        @Inject(CACHE_MANAGER) private readonly cacheManager: AppCache
+        private fetchDataService: FetchDataService,
     ) {
     }
 
     @UseGuards(JwtAuthGuard)
     @Post()
     async deletetemporary_qanda_img(@Request() req: JwtAuthGuardReq, @Body() body: { img_name: string }) {
-        let _file = await this.mediarepository.findOne({
+        let _file = await this.fetchDataService.mediarepository.findOne({
             media_name: body.img_name,
             user_ID: req.user.user_id
         })
         if (_file) {
-            await this.basictools.deleteunusedcdn([_file.media_path], req.user);
-            let _result = await this.mediarepository.delete({
+            await this.fetchDataService.basictools.deleteunusedcdn([_file.media_path], req.user);
+            let _result = await this.fetchDataService.mediarepository.delete({
                 media_name: body.img_name,
                 user_ID: req.user.user_id
             })
 
-            await this.cacheManager.store.del(_cacheKey.all_QA_images)
-            await this.cacheManager.store.del(_cacheKey.all_trash_medias)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_QA_images)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_trash_medias)
 
             return _result;
 
@@ -994,4 +939,14 @@ export class DeleteTemp_QandA_ImageController {
             return null;
         }
     }
+}
+
+@Controller('testapi')
+export class TestController {
+
+    @Get()
+    result(){
+        return {message: "Success"}
+    }
+
 }

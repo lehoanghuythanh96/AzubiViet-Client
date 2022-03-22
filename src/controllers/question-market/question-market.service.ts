@@ -1,7 +1,6 @@
-import { BadRequestException, CACHE_MANAGER, ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { AppCache, _cacheKey } from 'src/models/cacheKeys/cacheKeys.entity';
+import { _cacheKey } from 'src/models/cacheKeys/cacheKeys.entity';
 import { SystemDefaultConfig } from 'src/models/config/nestconfig.interface';
 import { MediaListEntity, UpdateFormUploadMediaInput } from 'src/models/media/media.entity';
 import { PostEntity, postTypes } from 'src/models/post/post.entity';
@@ -11,13 +10,9 @@ import { QuestionProductCategoryEntity } from 'src/models/questionproductcategor
 import { ReportLoggerTypes } from 'src/models/reportLogger/reportlogger.entity';
 import { ShopItemCodes } from 'src/models/ShopItem/shopitem.entity';
 import { UserAnswerReviewEntity } from 'src/models/useranswer_review/useranswer_review.entity';
-import { UserInventoryEntity } from 'src/models/userinventory/userinventory.entity';
 import { userJWTpayload } from 'src/models/userJWTpayload/userJWTpayload.interface';
-import { UserNotificationEntity, UserNotificationInput, UserNotification_Types } from 'src/models/usernotifications/usernotifications.entity';
-import { BasicToolsService } from 'src/tools/basic-tools/basic-tools.service';
-import { Repository } from 'typeorm';
+import { UserNotificationInput, UserNotification_Types } from 'src/models/usernotifications/usernotifications.entity';
 import { FetchDataService } from '../fetch-data/fetch-data.service';
-import { UserAuthenticationService } from '../user-authentication/user-authentication.service';
 
 let config = SystemDefaultConfig;
 
@@ -25,56 +20,37 @@ let config = SystemDefaultConfig;
 export class QuestionMarketService {
 
     constructor(
-        private basictools: BasicToolsService,
-        private userAuthService: UserAuthenticationService,
-        @InjectRepository(MediaListEntity)
-        private readonly mediarepository: Repository<MediaListEntity>,
-        @Inject(CACHE_MANAGER) private cacheManager: AppCache,
-        @InjectRepository(QuestionMarketAnswerEntity)
-        private readonly questionanswerrepository: Repository<QuestionMarketAnswerEntity>,
-        @InjectRepository(QuestionProductCategoryEntity)
-        private readonly questionproductcategoryRepository: Repository<QuestionProductCategoryEntity>,
-        @InjectRepository(PostEntity)
-        private postrepository: Repository<PostEntity>,
-        @InjectRepository(QuestionMarket_UserAnswerEntity)
-        private readonly questionmarketuseranswerRepository: Repository<QuestionMarket_UserAnswerEntity>,
-        @InjectRepository(UserAnswerReviewEntity)
-        private readonly userAnswerReviewRepository: Repository<UserAnswerReviewEntity>,
-        @InjectRepository(UserNotificationEntity)
-        private readonly userNotificationRepository: Repository<UserNotificationEntity>,
-        @InjectRepository(UserInventoryEntity)
-        private readonly userInventoryRepository: Repository<UserInventoryEntity>,
         private fetchDataService: FetchDataService,
         private jwt: JwtService,
     ) { }
 
     async getallquestionanswer() {
-        let _cache: QuestionMarketAnswerEntity[] = await this.cacheManager.store.get(_cacheKey.all_questionanswer)
+        let _cache: QuestionMarketAnswerEntity[] = await this.fetchDataService.cacheManager.store.get(_cacheKey.all_questionanswer)
 
         if (_cache) {
             return [..._cache]
         }
 
-        let _data = await this.questionanswerrepository.find();
+        let _data = await this.fetchDataService.questionmarketanswerrepository.find();
 
-        await this.cacheManager.store.set(_cacheKey.all_questionanswer, _data)
+        await this.fetchDataService.cacheManager.store.set(_cacheKey.all_questionanswer, _data)
 
         return [..._data]
 
     }
 
     async getallquestionanswerIMG() {
-        let _cache: MediaListEntity[] = await this.cacheManager.store.get(_cacheKey.all_questionanswer_IMG)
+        let _cache: MediaListEntity[] = await this.fetchDataService.cacheManager.store.get(_cacheKey.all_questionanswer_IMG)
 
         if (_cache) {
             return [..._cache]
         }
 
-        let _data = await this.mediarepository.find({
+        let _data = await this.fetchDataService.mediarepository.find({
             media_category: config.QUESTION_PRODUCT_ANSWER_IMG_CAT
         });
 
-        await this.cacheManager.store.set(_cacheKey.all_questionanswer_IMG, _data)
+        await this.fetchDataService.cacheManager.store.set(_cacheKey.all_questionanswer_IMG, _data)
 
         return [..._data]
 
@@ -82,17 +58,17 @@ export class QuestionMarketService {
 
     async getallquestionIMG() {
 
-        let _cache: MediaListEntity[] = await this.cacheManager.store.get(_cacheKey.all_questionIMG)
+        let _cache: MediaListEntity[] = await this.fetchDataService.cacheManager.store.get(_cacheKey.all_questionIMG)
 
         if (_cache) {
             return [..._cache]
         }
 
-        let _data = await this.mediarepository.find({
+        let _data = await this.fetchDataService.mediarepository.find({
             media_category: config.QUESTION_PRODUCT_IMG_CAT
         });
 
-        await this.cacheManager.store.set(_cacheKey.all_questionIMG, _data)
+        await this.fetchDataService.cacheManager.store.set(_cacheKey.all_questionIMG, _data)
 
         return [..._data]
 
@@ -100,17 +76,17 @@ export class QuestionMarketService {
 
     async getalluseranswerIMG() {
 
-        let _cache: MediaListEntity[] = await this.cacheManager.store.get(_cacheKey.all_useranswerIMG)
+        let _cache: MediaListEntity[] = await this.fetchDataService.cacheManager.store.get(_cacheKey.all_useranswerIMG)
 
         if (_cache) {
             return [..._cache]
         }
 
-        let _data = await this.mediarepository.find({
+        let _data = await this.fetchDataService.mediarepository.find({
             media_category: config.QUESTION_USER_ANSWER_IMG_CAT
         });
 
-        await this.cacheManager.store.set(_cacheKey.all_useranswerIMG, _data)
+        await this.fetchDataService.cacheManager.store.set(_cacheKey.all_useranswerIMG, _data)
 
         return [..._data]
 
@@ -118,7 +94,7 @@ export class QuestionMarketService {
 
     getusertempmediafiles = (user: userJWTpayload) => new Promise(
         async (resolve, reject) => {
-            let _num = await this.mediarepository.find({
+            let _num = await this.fetchDataService.mediarepository.find({
                 user_ID: user.user_id,
                 media_status: "trash"
             })
@@ -132,71 +108,71 @@ export class QuestionMarketService {
 
     async getall_questionproduct() {
 
-        let _cache: PostEntity[] = await this.cacheManager.store.get(_cacheKey.all_question_products);
+        let _cache: PostEntity[] = await this.fetchDataService.cacheManager.store.get(_cacheKey.all_question_products);
 
         if (_cache) {
             return [..._cache]
         }
 
-        let _data = await this.postrepository.find({
+        let _data = await this.fetchDataService.postrepository.find({
             post_type: postTypes.question_product
         });
-        await this.cacheManager.store.set(_cacheKey.all_question_products, _data)
+        await this.fetchDataService.cacheManager.store.set(_cacheKey.all_question_products, _data)
         return [..._data];
 
     }
 
     async getallquestionproductavatar() {
 
-        let _cache: MediaListEntity[] = await this.cacheManager.store.get(_cacheKey.all_questionproduct_avatar);
+        let _cache: MediaListEntity[] = await this.fetchDataService.cacheManager.store.get(_cacheKey.all_questionproduct_avatar);
 
         if (_cache) {
             return [..._cache]
         }
 
-        let _data = await this.mediarepository.find({
+        let _data = await this.fetchDataService.mediarepository.find({
             media_category: config.QUESTION_PRODUCT_AVATAR_CAT
         });
-        await this.cacheManager.store.set(_cacheKey.all_questionproduct_avatar, _data)
+        await this.fetchDataService.cacheManager.store.set(_cacheKey.all_questionproduct_avatar, _data)
         return [..._data];
 
     }
 
     async getalluseranswerinmarket() {
 
-        let _cache: QuestionMarket_UserAnswerEntity[] = await this.cacheManager.store.get(_cacheKey.all_userAnswerinMarket);
+        let _cache: QuestionMarket_UserAnswerEntity[] = await this.fetchDataService.cacheManager.store.get(_cacheKey.all_userAnswerinMarket);
 
         if (_cache) {
             return [..._cache]
         }
 
-        let _data = await this.questionmarketuseranswerRepository.find();
-        await this.cacheManager.store.set(_cacheKey.all_userAnswerinMarket, _data)
+        let _data = await this.fetchDataService.questionmarketuseranswerRepository.find();
+        await this.fetchDataService.cacheManager.store.set(_cacheKey.all_userAnswerinMarket, _data)
         return [..._data];
 
     }
 
     async getall_questionproductcategory() {
-        let _cache: QuestionProductCategoryEntity[] = await this.cacheManager.store.get(_cacheKey.all_questionproduct_category);
+        let _cache: QuestionProductCategoryEntity[] = await this.fetchDataService.cacheManager.store.get(_cacheKey.all_questionproduct_category);
 
         if (_cache) {
             return [..._cache]
         }
 
-        let _data = await this.questionproductcategoryRepository.find();
-        await this.cacheManager.store.set(_cacheKey.all_questionproduct_category, _data)
+        let _data = await this.fetchDataService.questionproductcategoryRepository.find();
+        await this.fetchDataService.cacheManager.store.set(_cacheKey.all_questionproduct_category, _data)
         return [..._data];
     }
 
     async getAllUserAnswerReviews() {
-        let _cache: UserAnswerReviewEntity[] = await this.cacheManager.store.get(_cacheKey.all_userAnswerReview);
+        let _cache: UserAnswerReviewEntity[] = await this.fetchDataService.cacheManager.store.get(_cacheKey.all_userAnswerReview);
 
         if (_cache) {
             return [..._cache]
         }
 
-        let _data = await this.userAnswerReviewRepository.find();
-        await this.cacheManager.store.set(_cacheKey.all_userAnswerReview, _data)
+        let _data = await this.fetchDataService.userAnswerReviewRepository.find();
+        await this.fetchDataService.cacheManager.store.set(_cacheKey.all_userAnswerReview, _data)
         return [..._data];
     }
 
@@ -204,7 +180,7 @@ export class QuestionMarketService {
         user_answer_ID: number
     ) {
 
-        await this.questionmarketuseranswerRepository.update(
+        await this.fetchDataService.questionmarketuseranswerRepository.update(
             {
                 ID: user_answer_ID
             },
@@ -219,7 +195,7 @@ export class QuestionMarketService {
                 waiting_reviewers: []
             }
         )
-        await this.cacheManager.store.del(_cacheKey.all_userAnswerReview)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_userAnswerReview)
 
         return
 
@@ -253,7 +229,7 @@ export class QuestionMarketService {
         let _newOriginalAnswerInfo = Object.assign(answerInfo, new_answer_input)
         _newOriginalAnswerInfo.answer_imgs = answer_imgs;
 
-        let _result = await this.userAnswerReviewRepository.update(
+        let _result = await this.fetchDataService.userAnswerReviewRepository.update(
             {
                 answerer_ID: user.user_id,
                 question_ID: question_ID
@@ -265,7 +241,7 @@ export class QuestionMarketService {
             }
         )
 
-        await this.cacheManager.store.del(_cacheKey.all_userAnswerReview)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_userAnswerReview)
 
         return _result
     }
@@ -275,7 +251,7 @@ export class QuestionMarketService {
         user: userJWTpayload
     ) {
 
-        let _result = await this.userAnswerReviewRepository.update(
+        let _result = await this.fetchDataService.userAnswerReviewRepository.update(
             {
                 answerer_ID: user.user_id,
                 question_ID: question_ID
@@ -286,7 +262,7 @@ export class QuestionMarketService {
             }
         )
 
-        await this.cacheManager.store.del(_cacheKey.all_userAnswerReview)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_userAnswerReview)
 
         return _result
 
@@ -296,7 +272,7 @@ export class QuestionMarketService {
         question_ID: number,
         user: userJWTpayload
     ) {
-        let _result = await this.userAnswerReviewRepository.update(
+        let _result = await this.fetchDataService.userAnswerReviewRepository.update(
             {
                 answerer_ID: user.user_id,
                 question_ID: question_ID
@@ -306,7 +282,7 @@ export class QuestionMarketService {
             }
         )
 
-        await this.cacheManager.store.del(_cacheKey.all_userAnswerReview)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_userAnswerReview)
 
         return _result
     }
@@ -347,7 +323,7 @@ export class QuestionMarketService {
         if (foundMedias.length > 0) {
             foundMedias.forEach(
                 async (item) => {
-                    await this.mediarepository.update(
+                    await this.fetchDataService.mediarepository.update(
                         {
                             ID: item.ID
                         },
@@ -357,10 +333,10 @@ export class QuestionMarketService {
                     )
                 }
             )
-            await this.cacheManager.store.del(_cacheKey.all_useranswerIMG)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_useranswerIMG)
         }
 
-        await this.questionmarketuseranswerRepository.update(
+        await this.fetchDataService.questionmarketuseranswerRepository.update(
             {
                 ID: answer_ID
             },
@@ -368,10 +344,10 @@ export class QuestionMarketService {
                 answer_status: "trash"
             }
         )
-        await this.cacheManager.store.del(_cacheKey.all_userAnswerinMarket);
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_userAnswerinMarket);
 
         let newReverseClockAmount = reverseRollNumber - 1
-        await this.userInventoryRepository.update(
+        await this.fetchDataService.userInventoryRepository.update(
             {
                 item_code: ShopItemCodes.reverseClock,
                 user_ID: user_id
@@ -380,9 +356,9 @@ export class QuestionMarketService {
                 item_quantity: newReverseClockAmount
             }
         )
-        await this.cacheManager.store.del(_cacheKey.all_userInventories)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_userInventories)
 
-        await this.userAnswerReviewRepository.update(
+        await this.fetchDataService.userAnswerReviewRepository.update(
             {
                 user_answer_ID: answer_ID
             },
@@ -390,9 +366,9 @@ export class QuestionMarketService {
                 review_status: "trash"
             }
         )
-        await this.cacheManager.store.del(_cacheKey.all_userAnswerReview)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_userAnswerReview)
 
-        let allNotis = await this.userAuthService.getallusernotifications();
+        let allNotis = await this.fetchDataService.getallusernotifications();
         let _selectedUsers: number[] = []
         let foundAnswerReviewedNoti = allNotis.find(
             y => y.type == UserNotification_Types.answer_isReviewed && y.user_IDs.includes(user_id)
@@ -400,10 +376,10 @@ export class QuestionMarketService {
 
         if (foundAnswerReviewedNoti) {
             _selectedUsers = _selectedUsers.concat(foundAnswerReviewedNoti.user_IDs)
-            await this.userNotificationRepository.delete({
+            await this.fetchDataService.userNotificationRepository.delete({
                 ID: foundAnswerReviewedNoti.ID
             })
-            await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
         }
 
         let foundAnswerReportedNoti = allNotis.find(
@@ -412,10 +388,10 @@ export class QuestionMarketService {
 
         if (foundAnswerReportedNoti) {
             _selectedUsers = _selectedUsers.concat(foundAnswerReportedNoti.user_IDs)
-            await this.userNotificationRepository.delete({
+            await this.fetchDataService.userNotificationRepository.delete({
                 ID: foundAnswerReportedNoti.ID
             })
-            await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
         }
 
         let foundUserAnsweredNoti = allNotis.find(
@@ -424,20 +400,20 @@ export class QuestionMarketService {
 
         if (foundUserAnsweredNoti) {
             _selectedUsers = _selectedUsers.concat(foundUserAnsweredNoti.user_IDs)
-            await this.userNotificationRepository.delete({
+            await this.fetchDataService.userNotificationRepository.delete({
                 ID: foundUserAnsweredNoti.ID
             })
-            await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
         }
 
         let foundAnswererPunishedNoti = allNotis.find(
             y => y.type == UserNotification_Types.answerer_isPunished && y.data.user_answer_ID == foundAnswer.ID && y.user_IDs.includes(user_id)
         )
         if (foundAnswererPunishedNoti) {
-            await this.userNotificationRepository.delete({
+            await this.fetchDataService.userNotificationRepository.delete({
                 ID: foundAnswererPunishedNoti.ID
             })
-            await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
         }
 
         return {
@@ -467,7 +443,7 @@ export class QuestionMarketService {
             y => y != controller_ID
         )
 
-        let allNotis = await this.userAuthService.getallusernotifications();
+        let allNotis = await this.fetchDataService.getallusernotifications();
         let foundNoti = allNotis.find(
             y => y.ID == noti_ID
         )
@@ -476,7 +452,7 @@ export class QuestionMarketService {
             throw new BadRequestException({ message: "[Question Market Service] Notification not found anymore" })
         }
 
-        await this.questionmarketuseranswerRepository.update(
+        await this.fetchDataService.questionmarketuseranswerRepository.update(
             {
                 ID: user_answer_ID
             },
@@ -485,13 +461,13 @@ export class QuestionMarketService {
                 report_controllers: _newControllerList
             }
         )
-        await this.cacheManager.store.del(_cacheKey.all_userAnswerinMarket)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_userAnswerinMarket)
 
         let _notiUserList = foundNoti.user_IDs;
         let _newNotiUserList = _notiUserList.filter(
             y => y != controller_ID
         )
-        await this.userNotificationRepository.update(
+        await this.fetchDataService.userNotificationRepository.update(
             {
                 ID: noti_ID
             },
@@ -499,10 +475,10 @@ export class QuestionMarketService {
                 user_IDs: _newNotiUserList
             }
         )
-        await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
 
         if (_reportCounter >= 2) {
-            await this.userAuthService.punishUserByPoint(1, foundAnswer.user_ID)
+            await this.fetchDataService.punishUserByPoint(1, foundAnswer.user_ID)
             let _newNoti: UserNotificationInput = {
                 type: UserNotification_Types.answerer_isPunished,
                 data: {
@@ -514,15 +490,15 @@ export class QuestionMarketService {
                 user_IDs: [foundAnswer.user_ID],
                 deletion_allowed: [foundAnswer.user_ID]
             }
-            await this.userAuthService.createSingleNoti(_newNoti)
-            await this.userNotificationRepository.delete({
+            await this.fetchDataService.createSingleNoti(_newNoti)
+            await this.fetchDataService.userNotificationRepository.delete({
                 ID: noti_ID
             })
-            await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
 
             await this.resetReporteduserAnswer(foundAnswer.ID)
 
-            await this.userAuthService.finishReportLogger(
+            await this.fetchDataService.finishReportLogger(
                 foundAnswer.ID,
                 ReportLoggerTypes.questionMarketUserAnswer
             )
@@ -556,7 +532,7 @@ export class QuestionMarketService {
             y => y != controller_ID
         )
 
-        let allNotis = await this.userAuthService.getallusernotifications();
+        let allNotis = await this.fetchDataService.getallusernotifications();
         let foundNoti = allNotis.find(
             y => y.ID == noti_ID
         )
@@ -565,7 +541,7 @@ export class QuestionMarketService {
             throw new BadRequestException({ message: "[Question Market Service] Notification not found anymore" })
         }
 
-        await this.questionmarketuseranswerRepository.update(
+        await this.fetchDataService.questionmarketuseranswerRepository.update(
             {
                 ID: user_answer_ID
             },
@@ -573,7 +549,7 @@ export class QuestionMarketService {
                 report_controllers: _newAnswerControllerList
             }
         )
-        await this.cacheManager.store.del(_cacheKey.all_userAnswerinMarket)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_userAnswerinMarket)
 
         let _reportCounter = foundNoti.data.reporter_punish_count + 1;
         let notiData = { ...foundNoti.data };
@@ -584,7 +560,7 @@ export class QuestionMarketService {
             y => y != controller_ID
         )
 
-        await this.userNotificationRepository.update(
+        await this.fetchDataService.userNotificationRepository.update(
             {
                 ID: noti_ID
             },
@@ -593,12 +569,12 @@ export class QuestionMarketService {
                 user_IDs: _notiUsers
             }
         )
-        await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
         if (_reportCounter >= 2) {
 
             let _selectedUsers: number[] = []
 
-            await this.userAuthService.punishUserByPoint(1, foundAnswer.report_sender)
+            await this.fetchDataService.punishUserByPoint(1, foundAnswer.report_sender)
             let _newNoti: UserNotificationInput = {
                 type: UserNotification_Types.user_answer_reporter_isPunished,
                 data: {
@@ -610,11 +586,11 @@ export class QuestionMarketService {
                 user_IDs: [foundAnswer.report_sender],
                 deletion_allowed: [foundAnswer.report_sender]
             }
-            await this.userAuthService.createSingleNoti(_newNoti)
-            await this.userNotificationRepository.delete({
+            await this.fetchDataService.createSingleNoti(_newNoti)
+            await this.fetchDataService.userNotificationRepository.delete({
                 ID: noti_ID
             })
-            await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
 
             _selectedUsers.push(foundAnswer.report_sender)
 
@@ -631,7 +607,7 @@ export class QuestionMarketService {
 
             _selectedUsers = _selectedUsers.concat(_repeatAnswer)
 
-            await this.userAuthService.finishReportLogger(
+            await this.fetchDataService.finishReportLogger(
                 foundAnswer.ID,
                 ReportLoggerTypes.questionMarketUserAnswer
             )
@@ -682,8 +658,8 @@ export class QuestionMarketService {
                 user_ID: user_id
             }
 
-            let _result = await this.questionmarketuseranswerRepository.save(_item)
-            await this.cacheManager.store.del(_cacheKey.all_userAnswerinMarket)
+            let _result = await this.fetchDataService.questionmarketuseranswerRepository.save(_item)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_userAnswerinMarket)
 
             if (!_result) {
                 throw new ForbiddenException({ message: "[Question Market Service] Save reply failed, can't query database" })
@@ -696,7 +672,7 @@ export class QuestionMarketService {
                     parent_ID: _result.ID,
                     media_status: "publish"
                 }
-                await this.mediarepository.update(
+                await this.fetchDataService.mediarepository.update(
                     {
                         media_name: answer_imgs[i]
                     },
@@ -704,15 +680,15 @@ export class QuestionMarketService {
                 )
             }
 
-            await this.cacheManager.store.del(_cacheKey.all_useranswerIMG)
-            await this.cacheManager.store.del(_cacheKey.all_trash_medias)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_useranswerIMG)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_trash_medias)
         }
 
         /* -------------------------------------------------------------------------- */
         /*                              Send notification                             */
         /* -------------------------------------------------------------------------- */
 
-        let _allusers = [...await this.userAuthService.getallusers()];
+        let _allusers = [...await this.fetchDataService.getallusers()];
 
         let _selectedUser: number[] = [];
 
@@ -745,7 +721,7 @@ export class QuestionMarketService {
             deletion_allowed: []
         }
 
-        let _savedNoti = await this.userNotificationRepository.save(_notification);
+        let _savedNoti = await this.fetchDataService.userNotificationRepository.save(_notification);
 
         let _secretToken = this.jwt.sign({
             question_ID: question_ID,
@@ -753,7 +729,7 @@ export class QuestionMarketService {
             user_answer_ID: _user_answer_ID
         })
 
-        await this.userNotificationRepository.update(
+        await this.fetchDataService.userNotificationRepository.update(
             {
                 ID: _savedNoti.ID
             },
@@ -762,9 +738,9 @@ export class QuestionMarketService {
             }
         )
 
-        await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
 
-        await this.questionmarketuseranswerRepository.update(
+        await this.fetchDataService.questionmarketuseranswerRepository.update(
             {
                 ID: _user_answer_ID
             },
@@ -772,7 +748,7 @@ export class QuestionMarketService {
                 waiting_reviewers: _selectedUser
             }
         )
-        await this.cacheManager.store.del(_cacheKey.all_userAnswerinMarket)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_userAnswerinMarket)
 
         return _selectedUser;
     }
@@ -799,7 +775,7 @@ export class QuestionMarketService {
             y => y != controller_ID
         )
 
-        let allNotis = await this.userAuthService.getallusernotifications();
+        let allNotis = await this.fetchDataService.getallusernotifications();
         let foundNoti = allNotis.find(
             y => y.ID == noti_ID
         )
@@ -808,7 +784,7 @@ export class QuestionMarketService {
             throw new BadRequestException({ message: "[Question Market Service] Notification not found anymore" })
         }
 
-        await this.userAnswerReviewRepository.update(
+        await this.fetchDataService.userAnswerReviewRepository.update(
             {
                 ID: user_answer_review_ID
             },
@@ -817,13 +793,13 @@ export class QuestionMarketService {
                 report_controllers: _newControllerList
             }
         )
-        await this.cacheManager.store.del(_cacheKey.all_userAnswerReview)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_userAnswerReview)
 
         let _notiUserList = foundNoti.user_IDs;
         let _newNotiUserList = _notiUserList.filter(
             y => y != controller_ID
         )
-        await this.userNotificationRepository.update(
+        await this.fetchDataService.userNotificationRepository.update(
             {
                 ID: noti_ID
             },
@@ -831,10 +807,10 @@ export class QuestionMarketService {
                 user_IDs: _newNotiUserList
             }
         )
-        await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
 
         if (_reportCounter >= 2) {
-            await this.userAuthService.punishUserByPoint(1, foundAnswerReview.review_author)
+            await this.fetchDataService.punishUserByPoint(1, foundAnswerReview.review_author)
             let _newNoti: UserNotificationInput = {
                 type: UserNotification_Types.useranswer_reviewer_isPunished,
                 data: {
@@ -847,13 +823,13 @@ export class QuestionMarketService {
                 user_IDs: [foundAnswerReview.review_author],
                 deletion_allowed: [foundAnswerReview.review_author]
             }
-            await this.userAuthService.createSingleNoti(_newNoti)
-            await this.userNotificationRepository.delete({
+            await this.fetchDataService.createSingleNoti(_newNoti)
+            await this.fetchDataService.userNotificationRepository.delete({
                 ID: noti_ID
             })
-            await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
 
-            await this.userAnswerReviewRepository.update(
+            await this.fetchDataService.userAnswerReviewRepository.update(
                 {
                     ID: foundAnswerReview.ID
                 },
@@ -864,9 +840,9 @@ export class QuestionMarketService {
                     report_controllers: []
                 }
             )
-            await this.cacheManager.store.del(_cacheKey.all_userAnswerReview)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_userAnswerReview)
 
-            await this.userAuthService.finishReportLogger(
+            await this.fetchDataService.finishReportLogger(
                 foundAnswerReview.ID,
                 ReportLoggerTypes.questionMarket_UserAnswerReview
             )
@@ -900,7 +876,7 @@ export class QuestionMarketService {
             y => y != controller_ID
         )
 
-        let allNotis = await this.userAuthService.getallusernotifications();
+        let allNotis = await this.fetchDataService.getallusernotifications();
         let foundNoti = allNotis.find(
             y => y.ID == noti_ID
         )
@@ -909,7 +885,7 @@ export class QuestionMarketService {
             throw new BadRequestException({ message: "[Question Market Service] Notification not found anymore" })
         }
 
-        await this.userAnswerReviewRepository.update(
+        await this.fetchDataService.userAnswerReviewRepository.update(
             {
                 ID: user_answer_review_ID
             },
@@ -917,7 +893,7 @@ export class QuestionMarketService {
                 report_controllers: _newReviewControllerList
             }
         )
-        await this.cacheManager.store.del(_cacheKey.all_userAnswerReview)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_userAnswerReview)
 
         let _reportCounter = foundNoti.data.reporter_punish_count + 1;
         let notiData = { ...foundNoti.data };
@@ -928,7 +904,7 @@ export class QuestionMarketService {
             y => y != controller_ID
         )
 
-        await this.userNotificationRepository.update(
+        await this.fetchDataService.userNotificationRepository.update(
             {
                 ID: noti_ID
             },
@@ -937,12 +913,12 @@ export class QuestionMarketService {
                 user_IDs: _notiUsers
             }
         )
-        await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
         if (_reportCounter >= 2) {
 
             let _selectedUsers: number[] = []
 
-            await this.userAuthService.punishUserByPoint(1, foundAnswerReview.report_sender)
+            await this.fetchDataService.punishUserByPoint(1, foundAnswerReview.report_sender)
             let _newNoti: UserNotificationInput = {
                 type: UserNotification_Types.useranswer_review_Reporter_isPunished,
                 data: {
@@ -955,15 +931,15 @@ export class QuestionMarketService {
                 user_IDs: [foundAnswerReview.report_sender],
                 deletion_allowed: [foundAnswerReview.report_sender]
             }
-            await this.userAuthService.createSingleNoti(_newNoti)
-            await this.userNotificationRepository.delete({
+            await this.fetchDataService.createSingleNoti(_newNoti)
+            await this.fetchDataService.userNotificationRepository.delete({
                 ID: noti_ID
             })
-            await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
 
             _selectedUsers.push(foundAnswerReview.report_sender)
 
-            await this.userAnswerReviewRepository.update(
+            await this.fetchDataService.userAnswerReviewRepository.update(
                 {
                     ID: foundAnswerReview.ID
                 },
@@ -973,9 +949,9 @@ export class QuestionMarketService {
                     report_controllers: []
                 }
             )
-            await this.cacheManager.store.del(_cacheKey.all_userAnswerReview)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_userAnswerReview)
 
-            await this.userAuthService.finishReportLogger(
+            await this.fetchDataService.finishReportLogger(
                 foundAnswerReview.ID,
                 ReportLoggerTypes.questionMarket_UserAnswerReview
             )
@@ -1010,7 +986,7 @@ export class QuestionMarketService {
             y => y != controller_ID
         )
 
-        let allNotis = await this.userAuthService.getallusernotifications();
+        let allNotis = await this.fetchDataService.getallusernotifications();
         let foundNoti = allNotis.find(
             y => y.ID == noti_ID
         )
@@ -1019,7 +995,7 @@ export class QuestionMarketService {
             throw new BadRequestException({ message: "[Question Market Service] Notification not found anymore" })
         }
 
-        await this.postrepository.update(
+        await this.fetchDataService.postrepository.update(
             {
                 ID: question_ID
             },
@@ -1028,13 +1004,13 @@ export class QuestionMarketService {
                 report_controllers: _newControllerList
             }
         )
-        await this.cacheManager.store.del(_cacheKey.all_question_products)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_question_products)
 
         let _notiUserList = foundNoti.user_IDs;
         let _newNotiUserList = _notiUserList.filter(
             y => y != controller_ID
         )
-        await this.userNotificationRepository.update(
+        await this.fetchDataService.userNotificationRepository.update(
             {
                 ID: noti_ID
             },
@@ -1042,10 +1018,10 @@ export class QuestionMarketService {
                 user_IDs: _newNotiUserList
             }
         )
-        await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
 
         if (_reportCounter >= 2) {
-            await this.userAuthService.punishUserByPoint(1, foundQuestion.post_author)
+            await this.fetchDataService.punishUserByPoint(1, foundQuestion.post_author)
             let _newNoti: UserNotificationInput = {
                 type: UserNotification_Types.questionAuthor_isPunished,
                 data: {
@@ -1056,13 +1032,13 @@ export class QuestionMarketService {
                 user_IDs: [foundQuestion.post_author],
                 deletion_allowed: [foundQuestion.post_author]
             }
-            await this.userAuthService.createSingleNoti(_newNoti)
-            await this.userNotificationRepository.delete({
+            await this.fetchDataService.createSingleNoti(_newNoti)
+            await this.fetchDataService.userNotificationRepository.delete({
                 ID: noti_ID
             })
-            await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
 
-            await this.postrepository.update(
+            await this.fetchDataService.postrepository.update(
                 {
                     ID: foundQuestion.ID
                 },
@@ -1070,7 +1046,7 @@ export class QuestionMarketService {
                     post_status: "trash"
                 }
             )
-            await this.cacheManager.store.del(_cacheKey.all_question_products)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_question_products)
 
             let questionAvatar = [...await this.getallquestionproductavatar()].filter(
                 y => y.parent_ID == foundQuestion.ID
@@ -1086,7 +1062,7 @@ export class QuestionMarketService {
 
             questionMedias.forEach(
                 async (item) => {
-                    await this.mediarepository.update(
+                    await this.fetchDataService.mediarepository.update(
                         {
                             ID: item
                         },
@@ -1097,10 +1073,10 @@ export class QuestionMarketService {
                 }
             )
 
-            await this.cacheManager.store.del(_cacheKey.all_questionIMG)
-            await this.cacheManager.store.del(_cacheKey.all_questionproduct_avatar)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_questionIMG)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_questionproduct_avatar)
 
-            await this.userAuthService.finishReportLogger(
+            await this.fetchDataService.finishReportLogger(
                 foundQuestion.ID,
                 ReportLoggerTypes.questionProduct_Invalid
             )
@@ -1134,7 +1110,7 @@ export class QuestionMarketService {
             y => y != controller_ID
         )
 
-        let allNotis = await this.userAuthService.getallusernotifications();
+        let allNotis = await this.fetchDataService.getallusernotifications();
         let foundNoti = allNotis.find(
             y => y.ID == noti_ID
         )
@@ -1143,7 +1119,7 @@ export class QuestionMarketService {
             throw new BadRequestException({ message: "[Question Market Service] Notification not found anymore" })
         }
 
-        await this.postrepository.update(
+        await this.fetchDataService.postrepository.update(
             {
                 ID: question_ID
             },
@@ -1151,7 +1127,7 @@ export class QuestionMarketService {
                 report_controllers: _newQuestionControllerList
             }
         )
-        await this.cacheManager.store.del(_cacheKey.all_question_products)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_question_products)
 
         let _reportCounter = foundNoti.data.reporter_punish_count + 1;
         let notiData = { ...foundNoti.data };
@@ -1162,7 +1138,7 @@ export class QuestionMarketService {
             y => y != controller_ID
         )
 
-        await this.userNotificationRepository.update(
+        await this.fetchDataService.userNotificationRepository.update(
             {
                 ID: noti_ID
             },
@@ -1171,12 +1147,12 @@ export class QuestionMarketService {
                 user_IDs: _notiUsers
             }
         )
-        await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
         if (_reportCounter >= 2) {
 
             let _selectedUsers: number[] = []
 
-            await this.userAuthService.punishUserByPoint(1, foundQuestion.report_sender)
+            await this.fetchDataService.punishUserByPoint(1, foundQuestion.report_sender)
             let _newNoti: UserNotificationInput = {
                 type: UserNotification_Types.questionProduct_Reporter_isPunished,
                 data: {
@@ -1187,15 +1163,15 @@ export class QuestionMarketService {
                 user_IDs: [foundQuestion.report_sender],
                 deletion_allowed: [foundQuestion.report_sender]
             }
-            await this.userAuthService.createSingleNoti(_newNoti)
-            await this.userNotificationRepository.delete({
+            await this.fetchDataService.createSingleNoti(_newNoti)
+            await this.fetchDataService.userNotificationRepository.delete({
                 ID: noti_ID
             })
-            await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
 
             _selectedUsers.push(foundQuestion.report_sender)
 
-            await this.postrepository.update(
+            await this.fetchDataService.postrepository.update(
                 {
                     ID: foundQuestion.ID
                 },
@@ -1206,9 +1182,9 @@ export class QuestionMarketService {
                     report_controllers: []
                 }
             )
-            await this.cacheManager.store.del(_cacheKey.all_question_products)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_question_products)
 
-            await this.userAuthService.finishReportLogger(
+            await this.fetchDataService.finishReportLogger(
                 foundQuestion.ID,
                 ReportLoggerTypes.questionProduct_Invalid
             )
@@ -1235,7 +1211,7 @@ export class QuestionMarketService {
             throw new BadRequestException({ message: "[Question Market Service] Reported answer not found."})
         }
 
-        let allInventories = await this.userAuthService.getAll_UserInventories()
+        let allInventories = await this.fetchDataService.getAll_UserInventories()
         let foundFighter = allInventories.find(
             y => y.user_ID == user.user_id && y.item_code == ShopItemCodes.reportFighter
         )
@@ -1247,20 +1223,20 @@ export class QuestionMarketService {
             throw new BadRequestException({ message: `You don't have any "Report Fighter" item.`})
         }
 
-        let allNotis = await this.userAuthService.getallusernotifications();
+        let allNotis = await this.fetchDataService.getallusernotifications();
 
         let foundAnswerReportedNoti = allNotis.find(
             y => y.type == UserNotification_Types.answer_isReported && y.data.user_answer_ID == user_answer_ID
         )
 
         if (foundAnswerReportedNoti) {
-            await this.userNotificationRepository.delete({
+            await this.fetchDataService.userNotificationRepository.delete({
                 ID: foundAnswerReportedNoti.ID
             })
-            await this.cacheManager.store.del(_cacheKey.all_usernotifications)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.all_usernotifications)
         }
 
-        await this.userInventoryRepository.update(
+        await this.fetchDataService.userInventoryRepository.update(
             {
                 user_ID: user.user_id,
                 item_code: ShopItemCodes.reportFighter
@@ -1269,7 +1245,7 @@ export class QuestionMarketService {
                 item_quantity: foundFighter.item_quantity - 1
             }
         )
-        await this.cacheManager.store.del(_cacheKey.all_userInventories)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_userInventories)
 
         await this.resetReporteduserAnswer(user_answer_ID)
 
@@ -1282,7 +1258,7 @@ export class QuestionMarketService {
             foundAnswer.ID
         )
 
-        await this.userAuthService.finishReportLogger(
+        await this.fetchDataService.finishReportLogger(
             foundAnswer.ID,
             ReportLoggerTypes.questionMarketUserAnswer
         )

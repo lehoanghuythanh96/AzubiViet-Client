@@ -17,19 +17,17 @@ const common_1 = require("@nestjs/common");
 const graphql_1 = require("@nestjs/graphql");
 const graphql_2 = require("graphql");
 const fetch_data_service_1 = require("../../controllers/fetch-data/fetch-data.service");
-const user_authentication_service_1 = require("../../controllers/user-authentication/user-authentication.service");
 const jwt_auth_guard_1 = require("../../tools/auth-tools/jwt-auth.guard");
 const user_decorator_1 = require("../../tools/auth-tools/user.decorator");
 const nestconfig_interface_1 = require("../config/nestconfig.interface");
 const userinventory_entity_1 = require("./userinventory.entity");
 let config = nestconfig_interface_1.SystemDefaultConfig;
 let UserInventoryResolver = class UserInventoryResolver {
-    constructor(fetchDataService, userService) {
+    constructor(fetchDataService) {
         this.fetchDataService = fetchDataService;
-        this.userService = userService;
     }
     async user_inventory(user) {
-        let _allInventories = await this.userService.getAll_UserInventories();
+        let _allInventories = await this.fetchDataService.getAll_UserInventories();
         let _result = _allInventories.filter(y => y.user_ID == user.user_id);
         return _result;
     }
@@ -85,8 +83,7 @@ __decorate([
 ], UserInventoryResolver.prototype, "item_description", null);
 UserInventoryResolver = __decorate([
     (0, graphql_1.Resolver)(() => userinventory_entity_1.UserInventoryEntity),
-    __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService,
-        user_authentication_service_1.UserAuthenticationService])
+    __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService])
 ], UserInventoryResolver);
 exports.UserInventoryResolver = UserInventoryResolver;
 //# sourceMappingURL=userinventory.resolver.js.map

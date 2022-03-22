@@ -9,6 +9,7 @@ import { DefaultConfigEntity } from "src/models/defaultconfig/defaultconfig.enti
 import { GuestQAndAEntity } from "src/models/GuestQAndA/GuestQAndA.entity";
 import { GuestQAndAResolver } from "src/models/GuestQAndA/GuestQAndA.resolver";
 import { LessonCategoryEntity } from "src/models/lessoncategory/lessoncategory.entity";
+import { LessonGuestPageEntity } from "src/models/lessonpageinfo/lessonpageinfo.entity";
 import { LevelTableEntity } from "src/models/leveltable/leveltable.entity";
 import { MainLandingPageEntity } from "src/models/mainlandingpageInfo/mainLandingPageInfo.entity";
 import { MainLandingPageInfoResolver } from "src/models/mainlandingpageInfo/mainLandingPageInfo.resolver";
@@ -18,6 +19,7 @@ import { PostEntityResolver } from "src/models/post/post.resolver";
 import { PostCommentEntity } from "src/models/postComment/postComment.entity";
 import { PostLikeEntity } from "src/models/postLikes/postlike.entity";
 import { QuestionMarketAnswerEntity } from "src/models/questionmarketanswer/questionmarketanswer.entity";
+import { QuestionMarketInfoEntity } from "src/models/questionmarketinfo/questionmarketinfo.entity";
 import { QuestionMarket_UserAnswerEntity } from "src/models/QuestionMarket_UserAnswer/questionmarket_useranswer.entity";
 import { QuestionProductCategoryEntity } from "src/models/questionproductcategory/questionproductcategory.entity";
 import { ReportLoggerEntity } from "src/models/reportLogger/reportlogger.entity";
@@ -38,7 +40,7 @@ import { Connection } from "typeorm";
 import { LessonHandlerService } from "../lesson-handler/lesson-handler.service";
 import { QuestionMarketService } from "../question-market/question-market.service";
 import { UserAuthenticationService } from "../user-authentication/user-authentication.service";
-import { AddSingleAreaController, ConfirmReportInvalidQA_AnswerController, ConfirmReportInvalidQA_QuestionController, DeleteTemp_QandA_ImageController, FetchDataController, RemoveAllUserServerChatContentController, ReportInvalidQAController, ReportInvalidQA_AnswerController, Upload_QandA_ImageByFileController, Upload_QandA_ImageByUrlController, UserDeleteQA_AnswerController, UserLikeQA_AnswerController, UserLockQAItemController, UserSendServerchatMsgController, UserSubmitQandAController, UserSubmitQandA_AnswerController, UserThankyou_QAAnswerController } from './fetch-data.controller';
+import { AddSingleAreaController, ConfirmReportInvalidQA_AnswerController, ConfirmReportInvalidQA_QuestionController, DeleteTemp_QandA_ImageController, FetchDataController, RemoveAllUserServerChatContentController, ReportInvalidQAController, ReportInvalidQA_AnswerController, TestController, Upload_QandA_ImageByFileController, Upload_QandA_ImageByUrlController, UserDeleteQA_AnswerController, UserLikeQA_AnswerController, UserLockQAItemController, UserSendServerchatMsgController, UserSubmitQandAController, UserSubmitQandA_AnswerController, UserThankyou_QAAnswerController } from './fetch-data.controller';
 import { FetchDataService } from './fetch-data.service';
 
 @Module({
@@ -80,7 +82,9 @@ import { FetchDataService } from './fetch-data.service';
             ThankYouItemEntity,
             ServerChatEntity,
             ShopItemEntity,
-            UserInventoryEntity
+            UserInventoryEntity,
+            QuestionMarketInfoEntity,
+            LessonGuestPageEntity
         ])
     ],
     controllers: [
@@ -100,7 +104,8 @@ import { FetchDataService } from './fetch-data.service';
         RemoveAllUserServerChatContentController,
         DeleteTemp_QandA_ImageController,
         Upload_QandA_ImageByFileController,
-        Upload_QandA_ImageByUrlController
+        Upload_QandA_ImageByUrlController,
+        TestController
     ],
     providers: [
         AdminInfoResolver,
@@ -116,6 +121,14 @@ import { FetchDataService } from './fetch-data.service';
         ShopItemResolver,
         UserInventoryResolver,
         QuestionMarketService
+    ],
+    exports: [
+        TypeOrmModule,
+        BasicToolsService,
+        FetchDataService,
+        UserAuthenticationService,
+        QuestionMarketService,
+        LessonHandlerService
     ]
 })
 

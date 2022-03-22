@@ -14,18 +14,14 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeletesinglelessonController = exports.UploadLessonAvatarByUrlController = exports.UploadLessonAvatarByimgFileController = exports.EditSingleLessonController = exports.PublishNewLessonController = exports.UploadLessonImageController = exports.AddLessonCategoryController = exports.LessonHandlerController = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
 const rxjs_1 = require("rxjs");
 const nestconfig_interface_1 = require("../../models/config/nestconfig.interface");
-const media_entity_1 = require("../../models/media/media.entity");
 const post_entity_1 = require("../../models/post/post.entity");
 const jwt_auth_guard_1 = require("../../tools/auth-tools/jwt-auth.guard");
-const basic_tools_service_1 = require("../../tools/basic-tools/basic-tools.service");
-const typeorm_2 = require("typeorm");
 const lesson_handler_service_1 = require("./lesson-handler.service");
 const Joi = require("joi");
-const lessoncategory_entity_1 = require("../../models/lessoncategory/lessoncategory.entity");
 const cacheKeys_entity_1 = require("../../models/cacheKeys/cacheKeys.entity");
+const fetch_data_service_1 = require("../fetch-data/fetch-data.service");
 let config = nestconfig_interface_1.SystemDefaultConfig;
 let LessonHandlerController = class LessonHandlerController {
 };
@@ -34,9 +30,8 @@ LessonHandlerController = __decorate([
 ], LessonHandlerController);
 exports.LessonHandlerController = LessonHandlerController;
 let AddLessonCategoryController = class AddLessonCategoryController {
-    constructor(LessonCategoryRepository, CacheManager) {
-        this.LessonCategoryRepository = LessonCategoryRepository;
-        this.CacheManager = CacheManager;
+    constructor(fetchDataService) {
+        this.fetchDataService = fetchDataService;
         this.uploadschema = Joi.object({
             category_name: Joi.string().required(),
             area_ID: Joi.number().min(1).required()
@@ -48,11 +43,11 @@ let AddLessonCategoryController = class AddLessonCategoryController {
             if (this.uploadschema.validate(body).error) {
                 throw new common_1.ForbiddenException({ message: (_a = this.uploadschema.validate(body).error) === null || _a === void 0 ? void 0 : _a.message });
             }
-            let _result = await this.LessonCategoryRepository.save({
+            let _result = await this.fetchDataService.lessoncategoryRepository.save({
                 category_name: body.category_name,
                 area_ID: body.area_ID
             });
-            await this.CacheManager.store.del(cacheKeys_entity_1._cacheKey.lessoncategory_all);
+            await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.lessoncategory_all);
             return _result;
         }
         else {
@@ -71,21 +66,17 @@ __decorate([
 ], AddLessonCategoryController.prototype, "addlessoncategory", null);
 AddLessonCategoryController = __decorate([
     (0, common_1.Controller)('addlessoncategory'),
-    __param(0, (0, typeorm_1.InjectRepository)(lessoncategory_entity_1.LessonCategoryEntity)),
-    __param(1, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [typeorm_2.Repository, Object])
+    __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService])
 ], AddLessonCategoryController);
 exports.AddLessonCategoryController = AddLessonCategoryController;
 let UploadLessonImageController = class UploadLessonImageController {
-    constructor(basictools, mediarepository, CacheManager) {
-        this.basictools = basictools;
-        this.mediarepository = mediarepository;
-        this.CacheManager = CacheManager;
+    constructor(fetchDataService) {
+        this.fetchDataService = fetchDataService;
     }
     uploadlessonimage(req, query) {
         let path_to_save = config.POST_IMG_PATH;
         if (query.file_size && query.file_size < 25000000) {
-            return (0, rxjs_1.from)(this.basictools.formuploadIMG(req, query.file_obj_name, path_to_save, req.user).then(async (result) => {
+            return (0, rxjs_1.from)(this.fetchDataService.basictools.formuploadIMG(req, query.file_obj_name, path_to_save, req.user).then(async (result) => {
                 let mediapayload = {
                     media_name: result.newFilename,
                     media_type: result.format,
@@ -95,8 +86,8 @@ let UploadLessonImageController = class UploadLessonImageController {
                     media_category: config.LESSON_IMG_CAT,
                     media_status: 'trash'
                 };
-                await this.mediarepository.save(mediapayload);
-                await this.CacheManager.store.del(cacheKeys_entity_1._cacheKey.all_trash_medias);
+                await this.fetchDataService.mediarepository.save(mediapayload);
+                await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_trash_medias);
                 return result;
             }).catch((error) => {
                 throw error;
@@ -118,10 +109,7 @@ __decorate([
 ], UploadLessonImageController.prototype, "uploadlessonimage", null);
 UploadLessonImageController = __decorate([
     (0, common_1.Controller)('uploadlessonimage'),
-    __param(1, (0, typeorm_1.InjectRepository)(media_entity_1.MediaListEntity)),
-    __param(2, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [basic_tools_service_1.BasicToolsService,
-        typeorm_2.Repository, Object])
+    __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService])
 ], UploadLessonImageController);
 exports.UploadLessonImageController = UploadLessonImageController;
 let PublishNewLessonController = class PublishNewLessonController {
@@ -220,15 +208,13 @@ EditSingleLessonController = __decorate([
 ], EditSingleLessonController);
 exports.EditSingleLessonController = EditSingleLessonController;
 let UploadLessonAvatarByimgFileController = class UploadLessonAvatarByimgFileController {
-    constructor(basictools, mediarepository, CacheManager) {
-        this.basictools = basictools;
-        this.mediarepository = mediarepository;
-        this.CacheManager = CacheManager;
+    constructor(fetchDataService) {
+        this.fetchDataService = fetchDataService;
     }
     uploadlessonavatarbyimgfile(req, query) {
         let path_to_save = config.POST_IMG_PATH;
         if (query.file_size && query.file_size < 25000000) {
-            return (0, rxjs_1.from)(this.basictools.formuploadIMG(req, query.file_obj_name, path_to_save, req.user).then(async (result) => {
+            return (0, rxjs_1.from)(this.fetchDataService.basictools.formuploadIMG(req, query.file_obj_name, path_to_save, req.user).then(async (result) => {
                 let mediapayload = {
                     media_name: result.newFilename,
                     media_type: result.format,
@@ -238,8 +224,8 @@ let UploadLessonAvatarByimgFileController = class UploadLessonAvatarByimgFileCon
                     media_category: config.LESSON_AVT_CAT,
                     media_status: 'trash'
                 };
-                await this.mediarepository.save(mediapayload);
-                await this.CacheManager.store.del(cacheKeys_entity_1._cacheKey.all_trash_medias);
+                await this.fetchDataService.mediarepository.save(mediapayload);
+                await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_trash_medias);
                 return result;
             }).catch((error) => {
                 throw error;
@@ -261,20 +247,15 @@ __decorate([
 ], UploadLessonAvatarByimgFileController.prototype, "uploadlessonavatarbyimgfile", null);
 UploadLessonAvatarByimgFileController = __decorate([
     (0, common_1.Controller)('uploadlessonavatarbyimgfile'),
-    __param(1, (0, typeorm_1.InjectRepository)(media_entity_1.MediaListEntity)),
-    __param(2, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [basic_tools_service_1.BasicToolsService,
-        typeorm_2.Repository, Object])
+    __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService])
 ], UploadLessonAvatarByimgFileController);
 exports.UploadLessonAvatarByimgFileController = UploadLessonAvatarByimgFileController;
 let UploadLessonAvatarByUrlController = class UploadLessonAvatarByUrlController {
-    constructor(basictools, mediarepository, CacheManager) {
-        this.basictools = basictools;
-        this.mediarepository = mediarepository;
-        this.CacheManager = CacheManager;
+    constructor(fetchDataService) {
+        this.fetchDataService = fetchDataService;
     }
     uploadlessonavatarbyurl(req, body) {
-        return (0, rxjs_1.from)(this.basictools.uploadimgbyurl(body.img_url, config.POST_IMG_PATH, req.user).then(async (result) => {
+        return (0, rxjs_1.from)(this.fetchDataService.basictools.uploadimgbyurl(body.img_url, config.POST_IMG_PATH, req.user).then(async (result) => {
             let mediapayload = {
                 media_name: result.newFilename,
                 media_type: result.format,
@@ -284,8 +265,8 @@ let UploadLessonAvatarByUrlController = class UploadLessonAvatarByUrlController 
                 media_category: config.LESSON_AVT_CAT,
                 media_status: 'trash'
             };
-            await this.mediarepository.save(mediapayload);
-            await this.CacheManager.store.del(cacheKeys_entity_1._cacheKey.all_trash_medias);
+            await this.fetchDataService.mediarepository.save(mediapayload);
+            await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_trash_medias);
             return result;
         }).catch((error) => {
             throw error;
@@ -303,29 +284,24 @@ __decorate([
 ], UploadLessonAvatarByUrlController.prototype, "uploadlessonavatarbyurl", null);
 UploadLessonAvatarByUrlController = __decorate([
     (0, common_1.Controller)('uploadlessonavatarbyurl'),
-    __param(1, (0, typeorm_1.InjectRepository)(media_entity_1.MediaListEntity)),
-    __param(2, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [basic_tools_service_1.BasicToolsService,
-        typeorm_2.Repository, Object])
+    __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService])
 ], UploadLessonAvatarByUrlController);
 exports.UploadLessonAvatarByUrlController = UploadLessonAvatarByUrlController;
 let DeletesinglelessonController = class DeletesinglelessonController {
-    constructor(postrepository, mediarepository, CacheManager) {
-        this.postrepository = postrepository;
-        this.mediarepository = mediarepository;
-        this.CacheManager = CacheManager;
+    constructor(fetchDataService) {
+        this.fetchDataService = fetchDataService;
     }
     async deletesinglelesson(req, body) {
-        await this.mediarepository.update({
+        await this.fetchDataService.mediarepository.update({
             parent_ID: body.post_ID
         }, {
             media_status: "trash"
         });
-        await this.CacheManager.store.del(cacheKeys_entity_1._cacheKey.all_trash_medias);
-        let _result = await this.postrepository.delete({
+        await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.all_trash_medias);
+        let _result = await this.fetchDataService.postrepository.delete({
             ID: body.post_ID
         });
-        await this.CacheManager.store.del(cacheKeys_entity_1._cacheKey.public_lessons);
+        await this.fetchDataService.cacheManager.store.del(cacheKeys_entity_1._cacheKey.public_lessons);
         return _result;
     }
 };
@@ -340,11 +316,7 @@ __decorate([
 ], DeletesinglelessonController.prototype, "deletesinglelesson", null);
 DeletesinglelessonController = __decorate([
     (0, common_1.Controller)('deletesinglelesson'),
-    __param(0, (0, typeorm_1.InjectRepository)(post_entity_1.PostEntity)),
-    __param(1, (0, typeorm_1.InjectRepository)(media_entity_1.MediaListEntity)),
-    __param(2, (0, common_1.Inject)(common_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [typeorm_2.Repository,
-        typeorm_2.Repository, Object])
+    __metadata("design:paramtypes", [fetch_data_service_1.FetchDataService])
 ], DeletesinglelessonController);
 exports.DeletesinglelessonController = DeletesinglelessonController;
 //# sourceMappingURL=lesson-handler.controller.js.map

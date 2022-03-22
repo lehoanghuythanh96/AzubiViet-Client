@@ -3,7 +3,6 @@ import { Parent, ResolveField, Resolver } from "@nestjs/graphql";
 import { FetchDataService } from "src/controllers/fetch-data/fetch-data.service";
 import { LessonHandlerService } from "src/controllers/lesson-handler/lesson-handler.service";
 import { QuestionMarketService } from "src/controllers/question-market/question-market.service";
-import { UserAuthenticationService } from "src/controllers/user-authentication/user-authentication.service";
 import { GqlJwtAuthGuard } from "src/tools/auth-tools/jwt-auth.guard";
 import { JwtCurrentUser } from "src/tools/auth-tools/user.decorator";
 import { SystemDefaultConfig } from "../config/nestconfig.interface";
@@ -11,7 +10,6 @@ import { MediaListEntity } from "../media/media.entity";
 import { PostEntity, postTypes } from "../post/post.entity";
 import { QuestionMarketAnswerEntity } from "../questionmarketanswer/questionmarketanswer.entity";
 import { QuestionMarket_UserAnswerEntity } from "../QuestionMarket_UserAnswer/questionmarket_useranswer.entity";
-import { ReportLoggerTypes } from "../reportLogger/reportlogger.entity";
 import { UserEntity } from "../userauthentication/userauth.entity";
 import { userJWTpayload } from "../userJWTpayload/userJWTpayload.interface";
 
@@ -21,10 +19,9 @@ let config = SystemDefaultConfig;
 export class PostEntityResolver {
 
     constructor(
-        private _fetchdataService: FetchDataService,
+        private fetchDataService: FetchDataService,
         private _questionmarketService: QuestionMarketService,
-        private _lessonhandlerservice: LessonHandlerService,
-        private _userauthService: UserAuthenticationService
+        private _lessonhandlerservice: LessonHandlerService
     ) { }
 
     @ResolveField(() => MediaListEntity)
@@ -124,7 +121,7 @@ export class PostEntityResolver {
     @UseGuards(GqlJwtAuthGuard)
     async author_info(@Parent() PostEntity: PostEntity) {
 
-        let _cache = await this._userauthService.getallusers();
+        let _cache = await this.fetchDataService.getallusers();
 
         let _curruser = {
             ..._cache.find(

@@ -14,6 +14,7 @@ import Joi = require('joi');
 import { EditSingleLessonBody, PostInput, PublishLessonBody } from 'src/models/post/post.interface';
 import { AddCategoryInput, LessonCategoryEntity } from 'src/models/lessoncategory/lessoncategory.entity';
 import { AppCache, _cacheKey } from 'src/models/cacheKeys/cacheKeys.entity';
+import { FetchDataService } from '../fetch-data/fetch-data.service';
 
 let config = SystemDefaultConfig;
 
@@ -23,9 +24,7 @@ export class LessonHandlerController { }
 @Controller('addlessoncategory')
 export class AddLessonCategoryController {
     constructor(
-        @InjectRepository(LessonCategoryEntity)
-        private readonly LessonCategoryRepository: Repository<LessonCategoryEntity>,
-        @Inject(CACHE_MANAGER) private readonly CacheManager: AppCache
+        private fetchDataService: FetchDataService,
     ) { }
 
     uploadschema = Joi.object({
@@ -40,12 +39,12 @@ export class AddLessonCategoryController {
             if (this.uploadschema.validate(body).error) {
                 throw new ForbiddenException({ message: this.uploadschema.validate(body).error?.message });
             }
-            let _result = await this.LessonCategoryRepository.save(<LessonCategoryEntity>{
+            let _result = await this.fetchDataService.lessoncategoryRepository.save(<LessonCategoryEntity>{
                 category_name: body.category_name,
                 area_ID: body.area_ID
             })
 
-            await this.CacheManager.store.del(_cacheKey.lessoncategory_all)
+            await this.fetchDataService.cacheManager.store.del(_cacheKey.lessoncategory_all)
 
             return _result
 
@@ -58,10 +57,7 @@ export class AddLessonCategoryController {
 @Controller('uploadlessonimage')
 export class UploadLessonImageController {
     constructor(
-        private basictools: BasicToolsService,
-        @InjectRepository(MediaListEntity)
-        private readonly mediarepository: Repository<MediaListEntity>,
-        @Inject(CACHE_MANAGER) private readonly CacheManager: AppCache
+        private fetchDataService: FetchDataService,
     ) { }
 
     @UseGuards(JwtAuthGuard)
@@ -70,7 +66,7 @@ export class UploadLessonImageController {
         let path_to_save = config.POST_IMG_PATH;
         if (query.file_size && query.file_size < 25000000) {
             return from(
-                this.basictools.formuploadIMG(req, query.file_obj_name, path_to_save, req.user).then(
+                this.fetchDataService.basictools.formuploadIMG(req, query.file_obj_name, path_to_save, req.user).then(
                     async (result: any) => {
                         let mediapayload: FormUploadMediaInput = {
                             media_name: result.newFilename,
@@ -81,8 +77,8 @@ export class UploadLessonImageController {
                             media_category: config.LESSON_IMG_CAT,
                             media_status: 'trash'
                         }
-                        await this.mediarepository.save(mediapayload);
-                        await this.CacheManager.store.del(_cacheKey.all_trash_medias)
+                        await this.fetchDataService.mediarepository.save(mediapayload);
+                        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_trash_medias)
                         // Must return result from ConvertWebPandMove Fn
                         return result;
                     }
@@ -180,10 +176,7 @@ export class EditSingleLessonController {
 @Controller('uploadlessonavatarbyimgfile')
 export class UploadLessonAvatarByimgFileController {
     constructor(
-        private basictools: BasicToolsService,
-        @InjectRepository(MediaListEntity)
-        private readonly mediarepository: Repository<MediaListEntity>,
-        @Inject(CACHE_MANAGER) private readonly CacheManager: AppCache
+        private fetchDataService: FetchDataService,
     ) { }
 
     @UseGuards(JwtAuthGuard)
@@ -192,7 +185,7 @@ export class UploadLessonAvatarByimgFileController {
         let path_to_save = config.POST_IMG_PATH;
         if (query.file_size && query.file_size < 25000000) {
             return from(
-                this.basictools.formuploadIMG(req, query.file_obj_name, path_to_save, req.user).then(
+                this.fetchDataService.basictools.formuploadIMG(req, query.file_obj_name, path_to_save, req.user).then(
                     async (result: any) => {
                         let mediapayload: FormUploadMediaInput = {
                             media_name: result.newFilename,
@@ -203,8 +196,8 @@ export class UploadLessonAvatarByimgFileController {
                             media_category: config.LESSON_AVT_CAT,
                             media_status: 'trash'
                         }
-                        await this.mediarepository.save(mediapayload);
-                        await this.CacheManager.store.del(_cacheKey.all_trash_medias)
+                        await this.fetchDataService.mediarepository.save(mediapayload);
+                        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_trash_medias)
                         // Must return result from ConvertWebPandMove Fn
                         return result;
                     }
@@ -224,10 +217,7 @@ export class UploadLessonAvatarByimgFileController {
 export class UploadLessonAvatarByUrlController {
 
     constructor(
-        private readonly basictools: BasicToolsService,
-        @InjectRepository(MediaListEntity)
-        private readonly mediarepository: Repository<MediaListEntity>,
-        @Inject(CACHE_MANAGER) private readonly CacheManager: AppCache
+        private fetchDataService: FetchDataService,
     ) {
     }
 
@@ -235,7 +225,7 @@ export class UploadLessonAvatarByUrlController {
     @Post()
     uploadlessonavatarbyurl(@Request() req: any, @Body() body: { img_url: string }): Observable<any> {
         return from(
-            this.basictools.uploadimgbyurl(
+            this.fetchDataService.basictools.uploadimgbyurl(
                 body.img_url,
                 config.POST_IMG_PATH,
                 req.user
@@ -250,8 +240,8 @@ export class UploadLessonAvatarByUrlController {
                         media_category: config.LESSON_AVT_CAT,
                         media_status: 'trash'
                     }
-                    await this.mediarepository.save(mediapayload);
-                    await this.CacheManager.store.del(_cacheKey.all_trash_medias)
+                    await this.fetchDataService.mediarepository.save(mediapayload);
+                    await this.fetchDataService.cacheManager.store.del(_cacheKey.all_trash_medias)
 
                     // Must return result from ConvertWebPandMove Fn
                     return result;
@@ -268,17 +258,13 @@ export class UploadLessonAvatarByUrlController {
 @Controller('deletesinglelesson')
 export class DeletesinglelessonController {
     constructor(
-        @InjectRepository(PostEntity)
-        private readonly postrepository: Repository<PostEntity>,
-        @InjectRepository(MediaListEntity)
-        private readonly mediarepository: Repository<MediaListEntity>,
-        @Inject(CACHE_MANAGER) private readonly CacheManager: AppCache
+        private fetchDataService: FetchDataService,
     ) { }
 
     @UseGuards(JwtAuthGuard)
     @Post()
     async deletesinglelesson(@Request() req: any, @Body() body: { post_ID: number }) {
-        await this.mediarepository.update(
+        await this.fetchDataService.mediarepository.update(
             {
                 parent_ID: body.post_ID
             },
@@ -286,11 +272,11 @@ export class DeletesinglelessonController {
                 media_status: "trash"
             }
         )
-        await this.CacheManager.store.del(_cacheKey.all_trash_medias)
-        let _result = await this.postrepository.delete({
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.all_trash_medias)
+        let _result = await this.fetchDataService.postrepository.delete({
             ID: body.post_ID
         })
-        await this.CacheManager.store.del(_cacheKey.public_lessons)
+        await this.fetchDataService.cacheManager.store.del(_cacheKey.public_lessons)
         return _result
     }
 }

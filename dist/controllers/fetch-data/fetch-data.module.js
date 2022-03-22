@@ -18,6 +18,7 @@ const defaultconfig_entity_1 = require("../../models/defaultconfig/defaultconfig
 const GuestQAndA_entity_1 = require("../../models/GuestQAndA/GuestQAndA.entity");
 const GuestQAndA_resolver_1 = require("../../models/GuestQAndA/GuestQAndA.resolver");
 const lessoncategory_entity_1 = require("../../models/lessoncategory/lessoncategory.entity");
+const lessonpageinfo_entity_1 = require("../../models/lessonpageinfo/lessonpageinfo.entity");
 const leveltable_entity_1 = require("../../models/leveltable/leveltable.entity");
 const mainLandingPageInfo_entity_1 = require("../../models/mainlandingpageInfo/mainLandingPageInfo.entity");
 const mainLandingPageInfo_resolver_1 = require("../../models/mainlandingpageInfo/mainLandingPageInfo.resolver");
@@ -27,6 +28,7 @@ const post_resolver_1 = require("../../models/post/post.resolver");
 const postComment_entity_1 = require("../../models/postComment/postComment.entity");
 const postlike_entity_1 = require("../../models/postLikes/postlike.entity");
 const questionmarketanswer_entity_1 = require("../../models/questionmarketanswer/questionmarketanswer.entity");
+const questionmarketinfo_entity_1 = require("../../models/questionmarketinfo/questionmarketinfo.entity");
 const questionmarket_useranswer_entity_1 = require("../../models/QuestionMarket_UserAnswer/questionmarket_useranswer.entity");
 const questionproductcategory_entity_1 = require("../../models/questionproductcategory/questionproductcategory.entity");
 const reportlogger_entity_1 = require("../../models/reportLogger/reportlogger.entity");
@@ -90,7 +92,9 @@ FetchDataModule = __decorate([
                 thankyouitem_entity_1.ThankYouItemEntity,
                 serverchat_entity_1.ServerChatEntity,
                 shopitem_entity_1.ShopItemEntity,
-                userinventory_entity_1.UserInventoryEntity
+                userinventory_entity_1.UserInventoryEntity,
+                questionmarketinfo_entity_1.QuestionMarketInfoEntity,
+                lessonpageinfo_entity_1.LessonGuestPageEntity
             ])
         ],
         controllers: [
@@ -110,7 +114,8 @@ FetchDataModule = __decorate([
             fetch_data_controller_1.RemoveAllUserServerChatContentController,
             fetch_data_controller_1.DeleteTemp_QandA_ImageController,
             fetch_data_controller_1.Upload_QandA_ImageByFileController,
-            fetch_data_controller_1.Upload_QandA_ImageByUrlController
+            fetch_data_controller_1.Upload_QandA_ImageByUrlController,
+            fetch_data_controller_1.TestController
         ],
         providers: [
             admininfo_resolver_1.AdminInfoResolver,
@@ -126,6 +131,14 @@ FetchDataModule = __decorate([
             shopitem_resolver_1.ShopItemResolver,
             userinventory_resolver_1.UserInventoryResolver,
             question_market_service_1.QuestionMarketService
+        ],
+        exports: [
+            typeorm_1.TypeOrmModule,
+            basic_tools_service_1.BasicToolsService,
+            fetch_data_service_1.FetchDataService,
+            user_authentication_service_1.UserAuthenticationService,
+            question_market_service_1.QuestionMarketService,
+            lesson_handler_service_1.LessonHandlerService
         ]
     })
 ], FetchDataModule);
